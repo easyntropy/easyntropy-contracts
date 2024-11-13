@@ -1,0 +1,43 @@
+services:
+  remixd:
+    build:
+      context: .
+      dockerfile: ./dev-env.dockerfile
+    entrypoint: /bin/bash -lc
+    ports:
+      - "65520:65520"
+      - "65523:65523"
+      - "65525:65525"
+    volumes:
+      - ../../src/:/usr/app/src
+    command: |
+      'remixd -s /usr/app/src --remix-ide http://localhost:8001/'
+
+  remix:
+    image: remixproject/remix-ide:remix_live
+    ports:
+      - "8001:80"
+
+  anvil:
+    build:
+      context: .
+      dockerfile: ./dev-env.dockerfile
+    entrypoint: /bin/bash -lc
+    ports:
+      - "8545:8545"
+    volumes:
+      - ../../src/:/usr/app/src
+    command: |
+      'anvil -p 8545 --host "0.0.0.0" --allow-origin "*"'
+
+  shell:
+    profiles: ["utils"]
+    build:
+      context: .
+      dockerfile: ./dev-env.dockerfile
+    entrypoint: /bin/bash -lc
+    volumes:
+      - dev-env-node-modules:/usr/app/node_modules
+      - ../../:/usr/app
+    environment:
+      ETH_RPC_URL: http://host.docker.internal:8545

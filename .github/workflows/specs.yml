@@ -1,0 +1,25 @@
+name: Run specs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  specs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: "true"
+          fetch-depth: 0
+
+      - name: Run linters
+        run: |
+          ./scripts/linters-check-docker.sh
+
+      - name: Run specs
+        run: |
+          ./scripts/shell-docker.sh forge test

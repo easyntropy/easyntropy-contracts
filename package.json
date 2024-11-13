@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "lint": "prettier --check './src/contracts/**/*.sol' && solhint --config .solhint.json './src/contracts/**/*.sol'"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-solidity": "^1.4.1",
+    "solhint": "^5.0.3",
+    "solhint-plugin-prettier": "^0.1.0"
+  }
+}
