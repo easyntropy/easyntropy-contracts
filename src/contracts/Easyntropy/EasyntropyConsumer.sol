@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.20;
 
-import "./IEasytropy.sol";
+import "./IEasyntropy.sol";
 
-abstract contract EasytropyConsumer {
-  IEasytropy public entropy;
+abstract contract EasyntropyConsumer {
+  IEasyntropy public entropy;
 
   event FulfillmentSucceed(
     uint64 indexed sequenceNumber,
@@ -23,27 +23,27 @@ abstract contract EasytropyConsumer {
   );
   error PermissionDenied();
 
-  modifier onlyEasytropy() {
+  modifier onlyEasyntropy() {
     if (msg.sender != address(entropy)) revert PermissionDenied();
     _;
   }
 
   constructor(address _entropy) {
-    entropy = IEasytropy(_entropy);
+    entropy = IEasyntropy(_entropy);
   }
 
-  function _easytropyFulfill(
+  function _easyntropyFulfill(
     uint64 sequenceNumber,
     bytes4 callbackSelector,
     bytes32 externalSeed,
     uint64 externalSeedId
-  ) external onlyEasytropy {
+  ) external onlyEasyntropy {
     bytes32 internalSeed = calculateInternalSeed();
     bytes32 seed = keccak256(abi.encodePacked(externalSeed, internalSeed));
 
     bytes4 finalCallbackSelector = callbackSelector;
     if (finalCallbackSelector == 0) {
-      finalCallbackSelector = bytes4(keccak256("easytropyFulfill(uint64,bytes32)"));
+      finalCallbackSelector = bytes4(keccak256("easyntropyFulfill(uint64,bytes32)"));
     }
 
     // solhint-disable-next-line avoid-low-level-calls

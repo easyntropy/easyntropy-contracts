@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.20;
 
-import "./IEasytropy.sol";
+import "./IEasyntropy.sol";
 
-contract Easytropy is IEasytropy {
+contract Easyntropy is IEasyntropy {
   // TODO...
 }

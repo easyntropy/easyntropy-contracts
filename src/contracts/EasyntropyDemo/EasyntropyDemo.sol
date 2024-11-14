@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.20;
 
-import "../Easytropy/EasytropyConsumer.sol";
+import "../Easyntropy/EasyntropyConsumer.sol";
 
-contract EasytropDemo is EasytropyConsumer {
+contract EasyntropyDemo is EasyntropyConsumer {
   //
   // support
   mapping(uint64 sequenceNumber => bool dummy) public pendingRequests;
@@ -15,7 +15,7 @@ contract EasytropDemo is EasytropyConsumer {
   event RandomNumberObtained(uint64 indexed sequenceNumber, bytes32 seed);
   error NotEnoughEth();
 
-  constructor(address _entropy) EasytropyConsumer(_entropy) {}
+  constructor(address _entropy) EasyntropyConsumer(_entropy) {}
 
   //
   // entropy demo
@@ -30,7 +30,7 @@ contract EasytropDemo is EasytropyConsumer {
     emit RandomNumberRequested(sequenceNumber);
   }
 
-  function easytropyFulfill(uint64 sequenceNumber, bytes32 seed) public onlyEasytropy {
+  function easyntropyFulfill(uint64 sequenceNumber, bytes32 seed) public onlyEasyntropy {
     delete pendingRequests[sequenceNumber];
 
     emit RandomNumberObtained(sequenceNumber, seed);
