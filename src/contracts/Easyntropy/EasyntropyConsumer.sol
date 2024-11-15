@@ -9,6 +9,7 @@ abstract contract EasyntropyConsumer {
 
   event FulfillmentSucceed(
     uint64 indexed sequenceNumber,
+    address indexed requester,
     bytes32 seed,
     bytes32 externalSeed,
     uint64 indexed externalSeedId,
@@ -16,6 +17,7 @@ abstract contract EasyntropyConsumer {
   );
   event FulfillmentFailed(
     uint64 indexed sequenceNumber,
+    address indexed requester,
     bytes32 seed,
     bytes32 externalSeed,
     uint64 indexed externalSeedId,
@@ -41,17 +43,12 @@ abstract contract EasyntropyConsumer {
     bytes32 internalSeed = calculateInternalSeed();
     bytes32 seed = keccak256(abi.encodePacked(externalSeed, internalSeed));
 
-    bytes4 finalCallbackSelector = callbackSelector;
-    if (finalCallbackSelector == 0) {
-      finalCallbackSelector = bytes4(keccak256("easyntropyFulfill(uint64,bytes32)"));
-    }
-
     // solhint-disable-next-line avoid-low-level-calls
-    (bool success, ) = address(this).call(abi.encodeWithSelector(finalCallbackSelector, sequenceNumber, seed));
+    (bool success, ) = address(this).call(abi.encodeWithSelector(callbackSelector, sequenceNumber, seed));
     if (success) {
-      emit FulfillmentSucceed(sequenceNumber, seed, externalSeed, externalSeedId, internalSeed);
+      emit FulfillmentSucceed(sequenceNumber, address(this), seed, externalSeed, externalSeedId, internalSeed);
     } else {
-      emit FulfillmentFailed(sequenceNumber, seed, externalSeed, externalSeedId, internalSeed);
+      emit FulfillmentFailed(sequenceNumber, address(this), seed, externalSeed, externalSeedId, internalSeed);
     }
   }
 
