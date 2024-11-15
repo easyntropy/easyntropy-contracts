@@ -18,7 +18,7 @@ contract EasyntropyDemo is EasyntropyConsumer {
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
 
   //
-  // entropy demo
+  // entropy demo default fulfill callback
   function requestRandomNumber() public payable {
     uint256 entropyRequestFee = entropy.getFee();
     if (msg.value < entropyRequestFee) revert NotEnoughEth();
@@ -30,7 +30,26 @@ contract EasyntropyDemo is EasyntropyConsumer {
     emit RandomNumberRequested(sequenceNumber);
   }
 
-  function easyntropyFulfill(uint64 sequenceNumber, bytes32 seed) public onlyEasyntropy {
+  function easyntropyFulfill(uint64 sequenceNumber, bytes32 seed) external onlyEasyntropy {
+    delete pendingRequests[sequenceNumber];
+
+    emit RandomNumberObtained(sequenceNumber, seed);
+  }
+
+  //
+  // entropy demo custom fulfill callback
+  function requestRandomNumberCustomCallback() public payable {
+    uint256 entropyRequestFee = entropy.getFee();
+    if (msg.value < entropyRequestFee) revert NotEnoughEth();
+
+    uint64 sequenceNumber = entropy.requestWithCallback{ value: entropyRequestFee }(this.customFulfill.selector);
+
+    pendingRequests[sequenceNumber] = true;
+
+    emit RandomNumberRequested(sequenceNumber);
+  }
+
+  function customFulfill(uint64 sequenceNumber, bytes32 seed) external onlyEasyntropy {
     delete pendingRequests[sequenceNumber];
 
     emit RandomNumberObtained(sequenceNumber, seed);
