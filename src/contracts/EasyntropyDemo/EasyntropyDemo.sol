@@ -19,11 +19,11 @@ contract EasyntropyDemo is EasyntropyConsumer {
 
   //
   // entropy demo default fulfill callback
-  function requestRandomNumber() public payable {
-    uint256 entropyRequestFee = entropy.getFee();
+  function requestRandomNumber() public payable returns (uint64 sequenceNumber) {
+    uint256 entropyRequestFee = entropyFee();
     if (msg.value < entropyRequestFee) revert NotEnoughEth();
 
-    uint64 sequenceNumber = entropy.requestWithCallback{ value: entropyRequestFee }();
+    sequenceNumber = entropy.requestWithCallback{ value: entropyRequestFee }();
 
     pendingRequests[sequenceNumber] = true;
 
@@ -38,11 +38,11 @@ contract EasyntropyDemo is EasyntropyConsumer {
 
   //
   // entropy demo custom fulfill callback
-  function requestRandomNumberCustomCallback() public payable {
-    uint256 entropyRequestFee = entropy.getFee();
+  function requestRandomNumberCustomCallback() public payable returns (uint64 sequenceNumber) {
+    uint256 entropyRequestFee = entropyFee();
     if (msg.value < entropyRequestFee) revert NotEnoughEth();
 
-    uint64 sequenceNumber = entropy.requestWithCallback{ value: entropyRequestFee }(this.customFulfill.selector);
+    sequenceNumber = entropy.requestWithCallback{ value: entropyRequestFee }(this.customFulfill.selector);
 
     pendingRequests[sequenceNumber] = true;
 

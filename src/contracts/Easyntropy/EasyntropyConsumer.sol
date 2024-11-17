@@ -34,6 +34,10 @@ abstract contract EasyntropyConsumer {
     entropy = IEasyntropy(_entropy);
   }
 
+  function entropyFee() public view returns (uint256 fee) {
+    fee = entropy.fee();
+  }
+
   function _easyntropyFulfill(
     uint64 sequenceNumber,
     bytes4 callbackSelector,

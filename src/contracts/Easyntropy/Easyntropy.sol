@@ -5,9 +5,9 @@ pragma solidity ^0.8.20;
 import "./IEasyntropy.sol";
 
 contract Easyntropy is IEasyntropy {
-  address private owner;
-  uint256 private fee;
+  uint256 public fee;
   uint64 public requestId = 0;
+  address private owner;
 
   event RequestSubmitted(uint64 indexed requestId, address indexed requester, bytes4 callbackSelector);
   error PermissionDenied();
@@ -29,15 +29,15 @@ contract Easyntropy is IEasyntropy {
     fee = _fee;
   }
 
-  function getFee() external view returns (uint256 result) {
-    result = fee;
-  }
-
   //
   // RNG requests
   function requestWithCallback() external payable returns (uint64 returnedRequestId) {
+    if (msg.value < fee) revert NotEnoughEth();
+    returnedRequestId = ++requestId;
+
     bytes4 callbackSelector = bytes4(keccak256("easyntropyFulfill(uint64,bytes32)"));
-    returnedRequestId = this.requestWithCallback(callbackSelector);
+
+    emit RequestSubmitted(returnedRequestId, msg.sender, callbackSelector);
   }
 
   function requestWithCallback(bytes4 callbackSelector) external payable returns (uint64 returnedRequestId) {
