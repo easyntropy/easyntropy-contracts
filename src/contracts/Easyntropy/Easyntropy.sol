@@ -7,7 +7,7 @@ import "./IEasyntropy.sol";
 contract Easyntropy is IEasyntropy {
   uint256 public fee;
   uint64 public requestId = 0;
-  address private owner;
+  address public owner;
 
   event RequestSubmitted(uint64 indexed requestId, address indexed requester, bytes4 callbackSelector);
   error PermissionDenied();
