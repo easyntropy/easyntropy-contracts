@@ -3,6 +3,7 @@
 pragma solidity ^0.8.20;
 
 import "./IEasyntropy.sol";
+import "./EasyntropyConsumer.sol";
 
 contract Easyntropy is IEasyntropy {
   uint256 public fee;
@@ -45,6 +46,18 @@ contract Easyntropy is IEasyntropy {
     returnedRequestId = ++requestId;
 
     emit RequestSubmitted(returnedRequestId, msg.sender, callbackSelector);
+  }
+
+  //
+  // rng responses
+  function responseWithCallback(
+    uint64 sequenceNumber,
+    address requester,
+    bytes4 callbackSelector,
+    bytes32 externalSeed,
+    uint64 externalSeedId
+  ) public onlyOwner {
+    EasyntropyConsumer(requester)._easyntropyFulfill(sequenceNumber, callbackSelector, externalSeed, externalSeedId);
   }
 
   //

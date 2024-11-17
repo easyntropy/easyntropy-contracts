@@ -26,7 +26,7 @@ abstract contract EasyntropyConsumer {
   error PermissionDenied();
 
   modifier onlyEasyntropy() {
-    if (msg.sender != address(entropy)) revert PermissionDenied();
+    if (msg.sender != address(this)) revert PermissionDenied();
     _;
   }
 
@@ -38,12 +38,9 @@ abstract contract EasyntropyConsumer {
     fee = entropy.fee();
   }
 
-  function _easyntropyFulfill(
-    uint64 sequenceNumber,
-    bytes4 callbackSelector,
-    bytes32 externalSeed,
-    uint64 externalSeedId
-  ) external onlyEasyntropy {
+  function _easyntropyFulfill(uint64 sequenceNumber, bytes4 callbackSelector, bytes32 externalSeed, uint64 externalSeedId) external {
+    if (msg.sender != address(entropy)) revert PermissionDenied();
+
     bytes32 internalSeed = calculateInternalSeed();
     bytes32 seed = keccak256(abi.encodePacked(externalSeed, internalSeed));
 

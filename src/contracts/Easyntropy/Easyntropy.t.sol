@@ -1,4 +1,4 @@
-/* solhint-disable func-name-mixedcase, gas-strict-inequalities */
+/* solhint-disable func-name-mixedcase, gas-strict-inequalities, one-contract-per-file */
 /* solhint-enable foundry-test-functions */
 
 // SPDX-License-Identifier: UNLICENSED
@@ -7,6 +7,7 @@ pragma solidity ^0.8.20;
 import { Test } from "forge-std/Test.sol";
 
 import { Easyntropy } from "./Easyntropy.sol";
+import { EasyntropyConsumer } from "./EasyntropyConsumer.sol";
 
 contract EasyntropyTest is Test {
   Easyntropy private subject;
@@ -117,9 +118,45 @@ contract EasyntropyTest is Test {
     subject.requestWithCallback{ value: fee }(callbackSelector);
   }
 
+  function test_responseWithCallback__FailsWhenExecutedByNotOwner() public {
+    vm.expectRevert(Easyntropy.PermissionDenied.selector);
+    subject.responseWithCallback(
+      1, // sequenceNumber
+      address(subject), // requester
+      bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
+      bytes32(uint256(2)), // externalSeed
+      3 // externalSeedId
+    );
+  }
+
+  function test_responseWithCallback__callsCallback() public {
+    __prank(owner);
+    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+
+    vm.expectEmit(true, true, true, true);
+    emit EasyntropyConsumerDummy.FulfillmentSucceed();
+
+    subject.responseWithCallback(
+      1, // sequenceNumber
+      address(easyntropyConsumer), // requester
+      bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
+      bytes32(uint256(2)), // externalSeed
+      3 // externalSeedId
+    );
+  }
+
   // private
   function __prank(address actor) public {
     vm.stopPrank();
     vm.startPrank(actor);
+  }
+}
+
+contract EasyntropyConsumerDummy is EasyntropyConsumer {
+  event FulfillmentSucceed();
+
+  constructor(address _entropy) EasyntropyConsumer(_entropy) {}
+  function easyntropyFulfill(uint64, bytes32) public onlyEasyntropy {
+    emit FulfillmentSucceed();
   }
 }
