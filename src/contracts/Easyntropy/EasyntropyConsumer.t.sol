@@ -47,10 +47,10 @@ contract EasyntropyConsumerTest is Test {
     __prank(owner);
 
     vm.expectEmit(true, false, false, false);
-    emit EasyntropyConsumerDummy.FulfillmentSucceed();
+    emit EasyntropyConsumerDummy.FulfillmentSucceeded();
 
     vm.expectEmit(true, true, true, true);
-    emit EasyntropyConsumer.FulfillmentSucceed(
+    emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // sequenceNumber
       address(subject), // requester
       0xb37150ceb7e138645bfe4dfcef9a75073e1d7aa14c524dfdd20d3f751fad1084, // seed (based on externalSeed and internalSeed)
@@ -94,10 +94,10 @@ contract EasyntropyConsumerTest is Test {
     __prank(owner);
 
     vm.expectEmit(true, false, false, false);
-    emit EasyntropyConsumerDummy.CustomFulfillmentSucceed();
+    emit EasyntropyConsumerDummy.CustomFulfillmentSucceeded();
 
     vm.expectEmit(true, true, true, true);
-    emit EasyntropyConsumer.FulfillmentSucceed(
+    emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // sequenceNumber
       address(subject), // requester
       0xb37150ceb7e138645bfe4dfcef9a75073e1d7aa14c524dfdd20d3f751fad1084, // seed (based on externalSeed and internalSeed)
@@ -120,10 +120,10 @@ contract EasyntropyConsumerTest is Test {
     subject = new EasyntropyConsumerDummyCustomInternalSeed(address(easyntropy));
 
     vm.expectEmit(true, false, false, false);
-    emit EasyntropyConsumerDummyCustomInternalSeed.FulfillmentSucceed();
+    emit EasyntropyConsumerDummyCustomInternalSeed.FulfillmentSucceeded();
 
     vm.expectEmit(true, true, true, true);
-    emit EasyntropyConsumer.FulfillmentSucceed(
+    emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // sequenceNumber
       address(subject), // requester
       0xabbb5caa7dda850e60932de0934eb1f9d0f59695050f761dc64e443e5030a569, // seed (based on externalSeed and internalSeed)
@@ -149,24 +149,24 @@ contract EasyntropyConsumerTest is Test {
 }
 
 contract EasyntropyConsumerDummy is EasyntropyConsumer {
-  event FulfillmentSucceed();
-  event CustomFulfillmentSucceed();
+  event FulfillmentSucceeded();
+  event CustomFulfillmentSucceeded();
 
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
   function easyntropyFulfill(uint64, bytes32) public onlyEasyntropy {
-    emit FulfillmentSucceed();
+    emit FulfillmentSucceeded();
   }
   function customFulfill(uint64, bytes32) public onlyEasyntropy {
-    emit CustomFulfillmentSucceed();
+    emit CustomFulfillmentSucceeded();
   }
 }
 
 contract EasyntropyConsumerDummyCustomInternalSeed is EasyntropyConsumer {
-  event FulfillmentSucceed();
+  event FulfillmentSucceeded();
 
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
   function easyntropyFulfill(uint64, bytes32) public onlyEasyntropy {
-    emit FulfillmentSucceed();
+    emit FulfillmentSucceeded();
   }
   function calculateInternalSeed() internal pure override returns (bytes32 result) {
     result = 0;

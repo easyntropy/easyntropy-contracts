@@ -134,7 +134,7 @@ contract EasyntropyTest is Test {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
     vm.expectEmit(true, true, true, true);
-    emit EasyntropyConsumerDummy.FulfillmentSucceed();
+    emit EasyntropyConsumerDummy.FulfillmentSucceeded();
 
     subject.responseWithCallback(
       1, // sequenceNumber
@@ -153,10 +153,10 @@ contract EasyntropyTest is Test {
 }
 
 contract EasyntropyConsumerDummy is EasyntropyConsumer {
-  event FulfillmentSucceed();
+  event FulfillmentSucceeded();
 
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
   function easyntropyFulfill(uint64, bytes32) public onlyEasyntropy {
-    emit FulfillmentSucceed();
+    emit FulfillmentSucceeded();
   }
 }
