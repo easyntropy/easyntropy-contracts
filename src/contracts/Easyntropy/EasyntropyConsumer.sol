@@ -7,7 +7,7 @@ import "./IEasyntropy.sol";
 abstract contract EasyntropyConsumer {
   IEasyntropy public entropy;
 
-  event FulfillmentSucceed(
+  event FulfillmentSucceeded(
     uint64 indexed sequenceNumber,
     address indexed requester,
     bytes32 seed,
@@ -47,7 +47,7 @@ abstract contract EasyntropyConsumer {
     // solhint-disable-next-line avoid-low-level-calls
     (bool success, ) = address(this).call(abi.encodeWithSelector(callbackSelector, sequenceNumber, seed));
     if (success) {
-      emit FulfillmentSucceed(sequenceNumber, address(this), seed, externalSeed, externalSeedId, internalSeed);
+      emit FulfillmentSucceeded(sequenceNumber, address(this), seed, externalSeed, externalSeedId, internalSeed);
     } else {
       emit FulfillmentFailed(sequenceNumber, address(this), seed, externalSeed, externalSeedId, internalSeed);
     }
