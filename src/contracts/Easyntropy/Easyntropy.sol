@@ -36,9 +36,11 @@ contract Easyntropy is IEasyntropy {
     if (msg.value < fee) revert NotEnoughEth();
     returnedRequestId = ++requestId;
 
-    bytes4 callbackSelector = bytes4(keccak256("easyntropyFulfill(uint64,bytes32)"));
-
-    emit RequestSubmitted(returnedRequestId, msg.sender, callbackSelector);
+    emit RequestSubmitted(
+      returnedRequestId,
+      msg.sender,
+      0x774358d3 // bytes4(keccak256("easyntropyFulfill(uint64,bytes32)"));
+    );
   }
 
   function requestWithCallback(bytes4 callbackSelector) external payable returns (uint64 returnedRequestId) {
