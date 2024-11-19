@@ -167,7 +167,7 @@ contract EasyntropyTest is Test {
     );
   }
 
-  function test_responseWithCallback__callsCallback() public {
+  function test_responseWithCallback__CallsCallback() public {
     __prank(vault);
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 

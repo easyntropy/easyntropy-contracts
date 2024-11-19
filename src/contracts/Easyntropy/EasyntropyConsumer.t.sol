@@ -45,7 +45,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test__easyntropyFulfill_callsContractDefaultCallback() public {
+  function test__easyntropyFulfill_CallsContractDefaultCallback() public {
     __prank(vault);
 
     vm.expectEmit(true, false, false, false);
@@ -70,7 +70,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test__easyntropyFulfill_emitsFailEventWhenCallbackIsNotDefined() public {
+  function test__easyntropyFulfill_EmitsFailEventWhenCallbackIsNotDefined() public {
     __prank(vault);
 
     vm.expectEmit(true, true, true, true);
@@ -92,7 +92,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test__easyntropyFulfill_callsContractCustomCallback() public {
+  function test__easyntropyFulfill_CallsContractCustomCallback() public {
     __prank(vault);
 
     vm.expectEmit(true, false, false, false);
@@ -117,7 +117,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test__easyntropyFulfill_callsContractWithCustomInternalSeed() public {
+  function test__easyntropyFulfill_CallsContractWithCustomInternalSeed() public {
     __prank(vault);
     subject = new EasyntropyConsumerDummyCustomInternalSeed(address(easyntropy));
 
