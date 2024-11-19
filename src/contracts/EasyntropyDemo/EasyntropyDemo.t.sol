@@ -13,13 +13,15 @@ contract EasyntropyDemoTest is Test {
   Easyntropy private easyntropy;
   EasyntropyDemo private subject;
   address public user;
+  address public vault;
 
   function setUp() public {
     user = makeAddr("user");
+    vault = makeAddr("vault");
     vm.deal(user, 1 ether);
     vm.startPrank(user);
 
-    easyntropy = new Easyntropy(1 wei);
+    easyntropy = new Easyntropy(vault, 1 wei);
     subject = new EasyntropyDemo(address(easyntropy));
   }
 
