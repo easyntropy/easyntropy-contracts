@@ -89,9 +89,9 @@ contract EasyntropyTest is Test {
   function test_requestWithCallback_BumpsRequestId() public {
     uint256 fee = subject.fee();
 
-    assertEq(subject.requestId(), 0);
+    assertEq(subject.lastRequestId(), 0);
     subject.requestWithCallback{ value: fee }();
-    assertEq(subject.requestId(), 1);
+    assertEq(subject.lastRequestId(), 1);
   }
 
   function test_requestWithCallback_CreditsVaultAccount() public {
@@ -127,9 +127,9 @@ contract EasyntropyTest is Test {
     uint256 fee = subject.fee();
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
 
-    assertEq(subject.requestId(), 0);
+    assertEq(subject.lastRequestId(), 0);
     subject.requestWithCallback{ value: fee }(callbackSelector);
-    assertEq(subject.requestId(), 1);
+    assertEq(subject.lastRequestId(), 1);
   }
 
   function test_requestWithCallbackCustomCallback_CreditsVaultAccount() public {
