@@ -58,13 +58,13 @@ contract Easyntropy is IEasyntropy {
   //
   // rng responses
   function responseWithCallback(
-    uint64 sequenceNumber,
+    uint64 requestId,
     address requester,
     bytes4 callbackSelector,
     bytes32 externalSeed,
     uint64 externalSeedId
   ) public onlyVault {
-    EasyntropyConsumer(requester)._easyntropyFulfill(sequenceNumber, callbackSelector, externalSeed, externalSeedId);
+    EasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed, externalSeedId);
   }
 
   //
