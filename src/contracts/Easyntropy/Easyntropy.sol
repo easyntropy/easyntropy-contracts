@@ -7,7 +7,7 @@ import "./EasyntropyConsumer.sol";
 
 contract Easyntropy is IEasyntropy {
   uint256 public fee;
-  uint64 public requestId = 0;
+  uint64 public lastRequestId = 0;
   address public owner;
   address public vault;
 
@@ -33,26 +33,26 @@ contract Easyntropy is IEasyntropy {
 
   //
   // RNG requests
-  function requestWithCallback() external payable returns (uint64 returnedRequestId) {
+  function requestWithCallback() external payable returns (uint64 requestId) {
     if (msg.value < fee) revert NotEnoughEth();
 
-    returnedRequestId = ++requestId;
+    requestId = ++lastRequestId;
     payable(vault).transfer(msg.value);
 
     emit RequestSubmitted(
-      returnedRequestId,
+      requestId,
       msg.sender,
       0x774358d3 // bytes4(keccak256("easyntropyFulfill(uint64,bytes32)"));
     );
   }
 
-  function requestWithCallback(bytes4 callbackSelector) external payable returns (uint64 returnedRequestId) {
+  function requestWithCallback(bytes4 callbackSelector) external payable returns (uint64 requestId) {
     if (msg.value < fee) revert NotEnoughEth();
 
-    returnedRequestId = ++requestId;
+    requestId = ++lastRequestId;
     payable(vault).transfer(msg.value);
 
-    emit RequestSubmitted(returnedRequestId, msg.sender, callbackSelector);
+    emit RequestSubmitted(requestId, msg.sender, callbackSelector);
   }
 
   //
