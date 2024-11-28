@@ -12,15 +12,15 @@ contract EasyntropyDemo is EasyntropyConsumer {
 
   //
   // events & errors
-  event RandomNumberRequested(uint64 indexed sequenceNumber);
-  event RandomNumberObtained(uint64 indexed sequenceNumber, bytes32 seed);
+  event RandomValueRequested(uint64 indexed sequenceNumber);
+  event RandomValueObtained(uint64 indexed sequenceNumber, bytes32 seed);
   error NotEnoughEth();
 
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
 
   //
   // entropy demo default fulfill callback
-  function requestRandomNumber() public payable returns (uint64 sequenceNumber) {
+  function requestRandomValue() public payable returns (uint64 sequenceNumber) {
     uint256 entropyRequestFee = entropyFee();
     if (msg.value < entropyRequestFee) revert NotEnoughEth();
 
@@ -28,19 +28,19 @@ contract EasyntropyDemo is EasyntropyConsumer {
 
     pendingRequests[sequenceNumber] = true;
 
-    emit RandomNumberRequested(sequenceNumber);
+    emit RandomValueRequested(sequenceNumber);
   }
 
   function easyntropyFulfill(uint64 sequenceNumber, bytes32 seed) external onlyEasyntropy {
     delete pendingRequests[sequenceNumber];
     latestSeed = seed;
 
-    emit RandomNumberObtained(sequenceNumber, seed);
+    emit RandomValueObtained(sequenceNumber, seed);
   }
 
   //
   // entropy demo custom fulfill callback
-  function requestRandomNumberCustomCallback() public payable returns (uint64 sequenceNumber) {
+  function requestRandomValueCustomCallback() public payable returns (uint64 sequenceNumber) {
     uint256 entropyRequestFee = entropyFee();
     if (msg.value < entropyRequestFee) revert NotEnoughEth();
 
@@ -48,7 +48,7 @@ contract EasyntropyDemo is EasyntropyConsumer {
 
     pendingRequests[sequenceNumber] = true;
 
-    emit RandomNumberRequested(sequenceNumber);
+    emit RandomValueRequested(sequenceNumber);
   }
 
   function customFulfill(uint64 sequenceNumber, bytes32 seed) external onlyEasyntropy {
@@ -56,7 +56,7 @@ contract EasyntropyDemo is EasyntropyConsumer {
 
     latestSeed = seed;
 
-    emit RandomNumberObtained(sequenceNumber, seed);
+    emit RandomValueObtained(sequenceNumber, seed);
   }
 
   function calculateSeed(bytes32 externalSeed) internal pure override returns (bytes32 result) {
