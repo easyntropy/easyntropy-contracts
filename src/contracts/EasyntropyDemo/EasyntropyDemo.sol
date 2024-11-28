@@ -8,7 +8,7 @@ contract EasyntropyDemo is EasyntropyConsumer {
   //
   // support
   mapping(uint64 sequenceNumber => bool dummy) public pendingRequests;
-  uint256 public latestSeed;
+  bytes32 public latestSeed;
 
   //
   // events & errors
@@ -33,7 +33,7 @@ contract EasyntropyDemo is EasyntropyConsumer {
 
   function easyntropyFulfill(uint64 sequenceNumber, bytes32 seed) external onlyEasyntropy {
     delete pendingRequests[sequenceNumber];
-    latestSeed = uint256(seed);
+    latestSeed = seed;
 
     emit RandomNumberObtained(sequenceNumber, seed);
   }
@@ -54,9 +54,13 @@ contract EasyntropyDemo is EasyntropyConsumer {
   function customFulfill(uint64 sequenceNumber, bytes32 seed) external onlyEasyntropy {
     delete pendingRequests[sequenceNumber];
 
-    latestSeed = uint256(seed);
+    latestSeed = seed;
 
     emit RandomNumberObtained(sequenceNumber, seed);
+  }
+
+  function calculateSeed(bytes32 externalSeed) internal pure override returns (bytes32 result) {
+    result = externalSeed;
   }
 
   //

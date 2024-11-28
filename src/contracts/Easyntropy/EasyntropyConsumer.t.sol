@@ -55,10 +55,9 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // sequenceNumber
       address(subject), // requester
-      0xb37150ceb7e138645bfe4dfcef9a75073e1d7aa14c524dfdd20d3f751fad1084, // seed (based on externalSeed and internalSeed)
+      0x493411d13d63214b2404144a3bc1c0b96adbfb5b75b02b8d07720ea9a77142fd, // seed (based on externalSeed and internalSeed)
       bytes32(uint256(2)), // externalSeed
-      3, // externalSeedId
-      0xada5013122d395ba3c54772283fb069b10426056ef8ca54750cb9bb552a59e7d // internalSeed
+      3 // externalSeedId
     );
 
     easyntropy.responseWithCallback(
@@ -77,10 +76,9 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentFailed(
       1, // sequenceNumber
       address(subject), // requester
-      0xb37150ceb7e138645bfe4dfcef9a75073e1d7aa14c524dfdd20d3f751fad1084, // seed (based on externalSeed and internalSeed)
+      0x493411d13d63214b2404144a3bc1c0b96adbfb5b75b02b8d07720ea9a77142fd, // seed (based on externalSeed and internalSeed)
       bytes32(uint256(2)), // externalSeed
-      3, // externalSeedId
-      0xada5013122d395ba3c54772283fb069b10426056ef8ca54750cb9bb552a59e7d // internalSeed
+      3 // externalSeedId
     );
 
     easyntropy.responseWithCallback(
@@ -102,10 +100,9 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // sequenceNumber
       address(subject), // requester
-      0xb37150ceb7e138645bfe4dfcef9a75073e1d7aa14c524dfdd20d3f751fad1084, // seed (based on externalSeed and internalSeed)
+      0x493411d13d63214b2404144a3bc1c0b96adbfb5b75b02b8d07720ea9a77142fd, // seed (based on externalSeed and internalSeed)
       bytes32(uint256(2)), // externalSeed
-      3, // externalSeedId
-      0xada5013122d395ba3c54772283fb069b10426056ef8ca54750cb9bb552a59e7d // internalSeed
+      3 // externalSeedId
     );
 
     easyntropy.responseWithCallback(
@@ -117,21 +114,20 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test__easyntropyFulfill_CallsContractWithCustomInternalSeed() public {
+  function test__easyntropyFulfill_CallsContractWithCustomCalculateSeed() public {
     __prank(vault);
-    subject = new EasyntropyConsumerDummyCustomInternalSeed(address(easyntropy));
+    subject = new EasyntropyConsumerDummyCustomCalculateSeed(address(easyntropy));
 
     vm.expectEmit(true, false, false, false);
-    emit EasyntropyConsumerDummyCustomInternalSeed.FulfillmentSucceeded();
+    emit EasyntropyConsumerDummyCustomCalculateSeed.FulfillmentSucceeded();
 
     vm.expectEmit(true, true, true, true);
     emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // sequenceNumber
       address(subject), // requester
-      0xabbb5caa7dda850e60932de0934eb1f9d0f59695050f761dc64e443e5030a569, // seed (based on externalSeed and internalSeed)
+      0x0000000000000000000000000000000000000000000000000000000000000000, // seed (based on externalSeed and internalSeed)
       bytes32(uint256(2)), // externalSeed
-      3, // externalSeedId
-      0 // internalSeed
+      3 // externalSeedId
     );
 
     easyntropy.responseWithCallback(
@@ -163,14 +159,14 @@ contract EasyntropyConsumerDummy is EasyntropyConsumer {
   }
 }
 
-contract EasyntropyConsumerDummyCustomInternalSeed is EasyntropyConsumer {
+contract EasyntropyConsumerDummyCustomCalculateSeed is EasyntropyConsumer {
   event FulfillmentSucceeded();
 
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
   function easyntropyFulfill(uint64, bytes32) public onlyEasyntropy {
     emit FulfillmentSucceeded();
   }
-  function calculateInternalSeed() internal pure override returns (bytes32 result) {
+  function calculateSeed(bytes32) internal pure override returns (bytes32 result) {
     result = 0;
   }
 }

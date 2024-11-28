@@ -12,16 +12,14 @@ abstract contract EasyntropyConsumer {
     address indexed requester,
     bytes32 seed,
     bytes32 externalSeed,
-    uint64 indexed externalSeedId,
-    bytes32 internalSeed
+    uint64 indexed externalSeedId
   );
   event FulfillmentFailed(
     uint64 indexed sequenceNumber,
     address indexed requester,
     bytes32 seed,
     bytes32 externalSeed,
-    uint64 indexed externalSeedId,
-    bytes32 internalSeed
+    uint64 indexed externalSeedId
   );
   error PermissionDenied();
 
@@ -41,19 +39,18 @@ abstract contract EasyntropyConsumer {
   function _easyntropyFulfill(uint64 sequenceNumber, bytes4 callbackSelector, bytes32 externalSeed, uint64 externalSeedId) external {
     if (msg.sender != address(entropy)) revert PermissionDenied();
 
-    bytes32 internalSeed = calculateInternalSeed();
-    bytes32 seed = keccak256(abi.encodePacked(externalSeed, internalSeed));
+    bytes32 seed = calculateSeed(externalSeed);
 
     // solhint-disable-next-line avoid-low-level-calls
     (bool success, ) = address(this).call(abi.encodeWithSelector(callbackSelector, sequenceNumber, seed));
     if (success) {
-      emit FulfillmentSucceeded(sequenceNumber, address(this), seed, externalSeed, externalSeedId, internalSeed);
+      emit FulfillmentSucceeded(sequenceNumber, address(this), seed, externalSeed, externalSeedId);
     } else {
-      emit FulfillmentFailed(sequenceNumber, address(this), seed, externalSeed, externalSeedId, internalSeed);
+      emit FulfillmentFailed(sequenceNumber, address(this), seed, externalSeed, externalSeedId);
     }
   }
 
-  function calculateInternalSeed() internal view virtual returns (bytes32 result) {
-    result = keccak256(abi.encodePacked(block.number, tx.gasprice));
+  function calculateSeed(bytes32 externalSeed) internal view virtual returns (bytes32 result) {
+    result = keccak256(abi.encodePacked(externalSeed, block.number, tx.gasprice));
   }
 }
