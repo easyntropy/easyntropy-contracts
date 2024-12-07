@@ -8,14 +8,14 @@ abstract contract EasyntropyConsumer {
   IEasyntropy public entropy;
 
   event FulfillmentSucceeded(
-    uint64 indexed sequenceNumber,
+    uint64 indexed requestId,
     address indexed requester,
     bytes32 seed,
     bytes32 externalSeed,
     uint64 indexed externalSeedId
   );
   event FulfillmentFailed(
-    uint64 indexed sequenceNumber,
+    uint64 indexed requestId,
     address indexed requester,
     bytes32 seed,
     bytes32 externalSeed,
@@ -36,17 +36,17 @@ abstract contract EasyntropyConsumer {
     fee = entropy.fee();
   }
 
-  function _easyntropyFulfill(uint64 sequenceNumber, bytes4 callbackSelector, bytes32 externalSeed, uint64 externalSeedId) external {
+  function _easyntropyFulfill(uint64 requestId, bytes4 callbackSelector, bytes32 externalSeed, uint64 externalSeedId) external {
     if (msg.sender != address(entropy)) revert PermissionDenied();
 
     bytes32 seed = calculateSeed(externalSeed);
 
     // solhint-disable-next-line avoid-low-level-calls
-    (bool success, ) = address(this).call(abi.encodeWithSelector(callbackSelector, sequenceNumber, seed));
+    (bool success, ) = address(this).call(abi.encodeWithSelector(callbackSelector, requestId, seed));
     if (success) {
-      emit FulfillmentSucceeded(sequenceNumber, address(this), seed, externalSeed, externalSeedId);
+      emit FulfillmentSucceeded(requestId, address(this), seed, externalSeed, externalSeedId);
     } else {
-      emit FulfillmentFailed(sequenceNumber, address(this), seed, externalSeed, externalSeedId);
+      emit FulfillmentFailed(requestId, address(this), seed, externalSeed, externalSeedId);
     }
   }
 

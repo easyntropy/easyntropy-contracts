@@ -50,9 +50,9 @@ contract EasyntropyDemoTest is Test {
   function test_requestRandomValue_AddsEntryToPendingRequests() public {
     uint256 fee = subject.entropyFee();
 
-    uint64 sequenceNumber = subject.requestRandomValue{ value: fee }();
+    uint64 requestId = subject.requestRandomValue{ value: fee }();
 
-    bool pendingRequest = subject.pendingRequests(sequenceNumber);
+    bool pendingRequest = subject.pendingRequests(requestId);
     assertEq(pendingRequest, true);
   }
 
@@ -61,7 +61,7 @@ contract EasyntropyDemoTest is Test {
 
     vm.expectEmit(true, true, true, true);
     emit Easyntropy.RequestSubmitted(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // sender
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")) // callbackSelector
     );
@@ -84,9 +84,9 @@ contract EasyntropyDemoTest is Test {
   function test_requestRandomValueCustomCallback_AddsEntryToPendingRequests() public {
     uint256 fee = subject.entropyFee();
 
-    uint64 sequenceNumber = subject.requestRandomValueCustomCallback{ value: fee }();
+    uint64 requestId = subject.requestRandomValueCustomCallback{ value: fee }();
 
-    bool pendingRequest = subject.pendingRequests(sequenceNumber);
+    bool pendingRequest = subject.pendingRequests(requestId);
     assertEq(pendingRequest, true);
   }
 
@@ -95,7 +95,7 @@ contract EasyntropyDemoTest is Test {
 
     vm.expectEmit(true, true, true, true);
     emit Easyntropy.RequestSubmitted(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // sender
       bytes4(keccak256("customFulfill(uint64,bytes32)")) // callbackSelector
     );

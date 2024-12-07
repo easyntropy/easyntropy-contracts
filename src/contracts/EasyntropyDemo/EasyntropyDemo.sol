@@ -7,56 +7,56 @@ import "../Easyntropy/EasyntropyConsumer.sol";
 contract EasyntropyDemo is EasyntropyConsumer {
   //
   // support
-  mapping(uint64 sequenceNumber => bool dummy) public pendingRequests;
+  mapping(uint64 requestId => bool dummy) public pendingRequests;
   bytes32 public latestSeed;
 
   //
   // events & errors
-  event RandomValueRequested(uint64 indexed sequenceNumber);
-  event RandomValueObtained(uint64 indexed sequenceNumber, bytes32 seed);
+  event RandomValueRequested(uint64 indexed requestId);
+  event RandomValueObtained(uint64 indexed requestId, bytes32 seed);
   error NotEnoughEth();
 
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
 
   //
   // entropy demo default fulfill callback
-  function requestRandomValue() public payable returns (uint64 sequenceNumber) {
+  function requestRandomValue() public payable returns (uint64 requestId) {
     uint256 entropyRequestFee = entropyFee();
     if (msg.value < entropyRequestFee) revert NotEnoughEth();
 
-    sequenceNumber = entropy.requestWithCallback{ value: entropyRequestFee }();
+    requestId = entropy.requestWithCallback{ value: entropyRequestFee }();
 
-    pendingRequests[sequenceNumber] = true;
+    pendingRequests[requestId] = true;
 
-    emit RandomValueRequested(sequenceNumber);
+    emit RandomValueRequested(requestId);
   }
 
-  function easyntropyFulfill(uint64 sequenceNumber, bytes32 seed) external onlyEasyntropy {
-    delete pendingRequests[sequenceNumber];
+  function easyntropyFulfill(uint64 requestId, bytes32 seed) external onlyEasyntropy {
+    delete pendingRequests[requestId];
     latestSeed = seed;
 
-    emit RandomValueObtained(sequenceNumber, seed);
+    emit RandomValueObtained(requestId, seed);
   }
 
   //
   // entropy demo custom fulfill callback
-  function requestRandomValueCustomCallback() public payable returns (uint64 sequenceNumber) {
+  function requestRandomValueCustomCallback() public payable returns (uint64 requestId) {
     uint256 entropyRequestFee = entropyFee();
     if (msg.value < entropyRequestFee) revert NotEnoughEth();
 
-    sequenceNumber = entropy.requestWithCallback{ value: entropyRequestFee }(this.customFulfill.selector);
+    requestId = entropy.requestWithCallback{ value: entropyRequestFee }(this.customFulfill.selector);
 
-    pendingRequests[sequenceNumber] = true;
+    pendingRequests[requestId] = true;
 
-    emit RandomValueRequested(sequenceNumber);
+    emit RandomValueRequested(requestId);
   }
 
-  function customFulfill(uint64 sequenceNumber, bytes32 seed) external onlyEasyntropy {
-    delete pendingRequests[sequenceNumber];
+  function customFulfill(uint64 requestId, bytes32 seed) external onlyEasyntropy {
+    delete pendingRequests[requestId];
 
     latestSeed = seed;
 
-    emit RandomValueObtained(sequenceNumber, seed);
+    emit RandomValueObtained(requestId, seed);
   }
 
   function calculateSeed(bytes32 externalSeed) internal pure override returns (bytes32 result) {

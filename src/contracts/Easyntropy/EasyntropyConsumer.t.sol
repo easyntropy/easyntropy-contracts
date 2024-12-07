@@ -38,7 +38,7 @@ contract EasyntropyConsumerTest is Test {
   function test__easyntropyFulfill_FailsIfCalledByNotEasyntropy() public {
     vm.expectRevert(EasyntropyConsumer.PermissionDenied.selector);
     subject._easyntropyFulfill(
-      1, // sequenceNumber
+      1, // requestId
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
       bytes32(uint256(2)), // externalSeed
       3 // externalSeedId
@@ -53,7 +53,7 @@ contract EasyntropyConsumerTest is Test {
 
     vm.expectEmit(true, true, true, true);
     emit EasyntropyConsumer.FulfillmentSucceeded(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // requester
       0x493411d13d63214b2404144a3bc1c0b96adbfb5b75b02b8d07720ea9a77142fd, // seed (based on externalSeed and internalSeed)
       bytes32(uint256(2)), // externalSeed
@@ -61,7 +61,7 @@ contract EasyntropyConsumerTest is Test {
     );
 
     easyntropy.responseWithCallback(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
       bytes32(uint256(2)), // externalSeed
@@ -74,7 +74,7 @@ contract EasyntropyConsumerTest is Test {
 
     vm.expectEmit(true, true, true, true);
     emit EasyntropyConsumer.FulfillmentFailed(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // requester
       0x493411d13d63214b2404144a3bc1c0b96adbfb5b75b02b8d07720ea9a77142fd, // seed (based on externalSeed and internalSeed)
       bytes32(uint256(2)), // externalSeed
@@ -82,7 +82,7 @@ contract EasyntropyConsumerTest is Test {
     );
 
     easyntropy.responseWithCallback(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill__404(uint64,bytes32)")), // callbackSelector
       bytes32(uint256(2)), // externalSeed
@@ -98,7 +98,7 @@ contract EasyntropyConsumerTest is Test {
 
     vm.expectEmit(true, true, true, true);
     emit EasyntropyConsumer.FulfillmentSucceeded(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // requester
       0x493411d13d63214b2404144a3bc1c0b96adbfb5b75b02b8d07720ea9a77142fd, // seed (based on externalSeed and internalSeed)
       bytes32(uint256(2)), // externalSeed
@@ -106,7 +106,7 @@ contract EasyntropyConsumerTest is Test {
     );
 
     easyntropy.responseWithCallback(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // requester
       bytes4(keccak256("customFulfill(uint64,bytes32)")), // callbackSelector
       bytes32(uint256(2)), // externalSeed
@@ -123,7 +123,7 @@ contract EasyntropyConsumerTest is Test {
 
     vm.expectEmit(true, true, true, true);
     emit EasyntropyConsumer.FulfillmentSucceeded(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // requester
       0x0000000000000000000000000000000000000000000000000000000000000000, // seed (based on externalSeed and internalSeed)
       bytes32(uint256(2)), // externalSeed
@@ -131,7 +131,7 @@ contract EasyntropyConsumerTest is Test {
     );
 
     easyntropy.responseWithCallback(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
       bytes32(uint256(2)), // externalSeed

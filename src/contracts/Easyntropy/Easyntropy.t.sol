@@ -109,7 +109,7 @@ contract EasyntropyTest is Test {
 
     vm.expectEmit(true, true, true, true);
     emit Easyntropy.RequestSubmitted(
-      1, // sequenceNumber
+      1, // requestId
       user, // sender
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")) // callbackSelector
     );
@@ -149,7 +149,7 @@ contract EasyntropyTest is Test {
 
     vm.expectEmit(true, true, true, true);
     emit Easyntropy.RequestSubmitted(
-      1, // sequenceNumber
+      1, // requestId
       user, // sender
       bytes4(keccak256("customFulfill(uint64,bytes32)")) // callbackSelector
     );
@@ -159,7 +159,7 @@ contract EasyntropyTest is Test {
   function test_responseWithCallback__FailsWhenExecutedByNotVault() public {
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
     subject.responseWithCallback(
-      1, // sequenceNumber
+      1, // requestId
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
       bytes32(uint256(2)), // externalSeed
@@ -175,7 +175,7 @@ contract EasyntropyTest is Test {
     emit EasyntropyConsumerDummy.FulfillmentSucceeded();
 
     subject.responseWithCallback(
-      1, // sequenceNumber
+      1, // requestId
       address(easyntropyConsumer), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
       bytes32(uint256(2)), // externalSeed
