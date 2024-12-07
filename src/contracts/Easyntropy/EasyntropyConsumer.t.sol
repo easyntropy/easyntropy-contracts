@@ -20,6 +20,7 @@ contract EasyntropyConsumerTest is Test {
     owner = makeAddr("owner");
     user = makeAddr("user");
     vault = makeAddr("vault");
+    vm.deal(user, 1000 ether);
 
     __prank(owner);
     easyntropy = new Easyntropy(vault, 1 wei);
@@ -139,6 +140,36 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
+  function test_entropyRequestWithCallback_CallsEntropyAsSyntaxSugar() public {
+    EasyntropyConsumerDummy wrappedSubject = new EasyntropyConsumerDummy(address(easyntropy));
+
+    payable(address(wrappedSubject)).transfer(10 ether);
+
+    vm.expectEmit(false, true, true, false);
+    emit Easyntropy.RequestSubmitted(
+      1, // requestId - ignored
+      address(wrappedSubject), // requester
+      0x774358d3 // bytes4(keccak256("easyntropyFulfill(uint64,bytes32)"));
+    );
+
+    wrappedSubject.internal__entropyRequestWithCallback();
+  }
+
+  function test_entropyRequestWithCallback_CallsEntropyWithCustomCallbackAsSyntaxSugar() public {
+    EasyntropyConsumerDummy wrappedSubject = new EasyntropyConsumerDummy(address(easyntropy));
+
+    payable(address(wrappedSubject)).transfer(10 ether);
+
+    vm.expectEmit(false, true, true, false);
+    emit Easyntropy.RequestSubmitted(
+      1, // requestId - ignored
+      address(wrappedSubject), // requester
+      bytes4(keccak256("customFulfill(uint64,bytes32)")) // callbackSelector
+    );
+
+    wrappedSubject.internal__entropyRequestWithCallback(wrappedSubject.customFulfill.selector);
+  }
+
   // private
   function __prank(address actor) public {
     vm.stopPrank();
@@ -151,12 +182,22 @@ contract EasyntropyConsumerDummy is EasyntropyConsumer {
   event CustomFulfillmentSucceeded();
 
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
+
   function easyntropyFulfill(uint64, bytes32) public onlyEasyntropy {
     emit FulfillmentSucceeded();
   }
   function customFulfill(uint64, bytes32) public onlyEasyntropy {
     emit CustomFulfillmentSucceeded();
   }
+
+  function internal__entropyRequestWithCallback() public returns (uint64 requestId) {
+    requestId = entropyRequestWithCallback();
+  }
+
+  function internal__entropyRequestWithCallback(bytes4 callbackSelector) public returns (uint64 requestId) {
+    requestId = entropyRequestWithCallback(callbackSelector);
+  }
+  receive() external payable {}
 }
 
 contract EasyntropyConsumerDummyCustomCalculateSeed is EasyntropyConsumer {

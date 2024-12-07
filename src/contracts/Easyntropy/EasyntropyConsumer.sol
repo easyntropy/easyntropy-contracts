@@ -35,7 +35,16 @@ abstract contract EasyntropyConsumer {
   function entropyFee() public view returns (uint256 fee) {
     fee = entropy.fee();
   }
+  // request handling
+  function entropyRequestWithCallback() internal returns (uint64 requestId) {
+    requestId = entropy.requestWithCallback{ value: entropyFee() }();
+  }
 
+  function entropyRequestWithCallback(bytes4 callbackSelector) internal returns (uint64 requestId) {
+    requestId = entropy.requestWithCallback{ value: entropyFee() }(callbackSelector);
+  }
+
+  // response handling
   function _easyntropyFulfill(uint64 requestId, bytes4 callbackSelector, bytes32 externalSeed, uint64 externalSeedId) external {
     if (msg.sender != address(entropy)) revert PermissionDenied();
 
