@@ -19,6 +19,7 @@ contract Easyntropy is IEasyntropy {
   event DepositReceived(address indexed account, uint256 indexed value);
   event FundsWithdrawn(address indexed account, uint256 indexed value);
   error PermissionDenied();
+  error NotEasyntropyConsumer();
   error NotEnoughEth();
 
   modifier onlyOwner() {
@@ -75,7 +76,10 @@ contract Easyntropy is IEasyntropy {
 
     payable(vault).transfer(requestFee);
 
-    EasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed, externalSeedId);
+    try EasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed, externalSeedId) {
+    } catch {
+      revert NotEasyntropyConsumer();
+    }
   }
 
   //
