@@ -28,15 +28,15 @@ contract EasyntropyConsumerTest is Test {
     __prank(user);
   }
 
-  function test_constructor_SetsEntropyAddresses() public view {
+  function test_constructor_setsEntropyAddresses() public view {
     assertEq(address(subject.entropy()), address(easyntropy));
   }
 
-  function test_entropyFee_ReturnsFee() public view {
+  function test_entropyFee_returnsFee() public view {
     assertEq(subject.entropyFee(), easyntropy.fee());
   }
 
-  function test__easyntropyFulfill_FailsIfCalledByNotEasyntropy() public {
+  function test_easyntropyFulfill_failsIfCalledByNotEasyntropy() public {
     vm.expectRevert(EasyntropyConsumer.PermissionDenied.selector);
     subject._easyntropyFulfill(
       1, // requestId
@@ -46,7 +46,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test__easyntropyFulfill_CallsContractDefaultCallback() public {
+  function test_easyntropyFulfill_callsContractDefaultCallback() public {
     __prank(executor);
 
     vm.expectEmit(true, false, false, false);
@@ -70,7 +70,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test__easyntropyFulfill_EmitsFailEventWhenCallbackIsNotDefined() public {
+  function test_easyntropyFulfill_emitsFailEventWhenCallbackIsNotDefined() public {
     __prank(executor);
 
     vm.expectEmit(true, true, true, true);
@@ -91,7 +91,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test__easyntropyFulfill_CallsContractCustomCallback() public {
+  function test_easyntropyFulfill_callsContractCustomCallback() public {
     __prank(executor);
 
     vm.expectEmit(true, false, false, false);
@@ -115,7 +115,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test__easyntropyFulfill_CallsContractWithCustomCalculateSeed() public {
+  function test_easyntropyFulfill_callsContractWithCustomCalculateSeed() public {
     __prank(executor);
     subject = new EasyntropyConsumerDummyCustomCalculateSeed(address(easyntropy));
 
@@ -140,7 +140,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test_entropyRequestWithCallback_CallsEntropyAsSyntaxSugar() public {
+  function test_entropyRequestWithCallback_callsEntropyAsSyntaxSugar() public {
     EasyntropyConsumerDummy wrappedSubject = new EasyntropyConsumerDummy(address(easyntropy));
 
     payable(address(wrappedSubject)).transfer(10 ether);
@@ -155,7 +155,7 @@ contract EasyntropyConsumerTest is Test {
     wrappedSubject.internal__entropyRequestWithCallback();
   }
 
-  function test_entropyRequestWithCallback_CallsEntropyWithCustomCallbackAsSyntaxSugar() public {
+  function test_entropyRequestWithCallback_callsEntropyWithCustomCallbackAsSyntaxSugar() public {
     EasyntropyConsumerDummy wrappedSubject = new EasyntropyConsumerDummy(address(easyntropy));
 
     payable(address(wrappedSubject)).transfer(10 ether);
