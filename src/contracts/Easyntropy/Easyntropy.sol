@@ -6,12 +6,18 @@ import "./IEasyntropy.sol";
 import "./EasyntropyConsumer.sol";
 
 contract Easyntropy is IEasyntropy {
-  uint256 public fee;
-  uint64 public lastRequestId = 0;
   address public owner;
   address public vault;
+  uint64 public lastRequestId = 0;
+
+  uint256 public fee;
+  mapping(address requester => uint256 balance) public balances;
+  mapping(address requester => uint256 reservedBalance) public reservedFunds;
+  mapping(uint64 requestId => uint256 fee) public requestFees;
 
   event RequestSubmitted(uint64 indexed requestId, address indexed requester, bytes4 callbackSelector);
+  event DepositReceived(address indexed account, uint256 indexed value);
+  event FundsWithdrawn(address indexed account, uint256 indexed value);
   error PermissionDenied();
   error NotEnoughEth();
 
@@ -33,24 +39,19 @@ contract Easyntropy is IEasyntropy {
 
   //
   // RNG requests
-  function requestWithCallback() external payable returns (uint64 requestId) {
-    if (msg.value < fee) revert NotEnoughEth();
-
-    requestId = ++lastRequestId;
-    payable(vault).transfer(msg.value);
-
-    emit RequestSubmitted(
-      requestId,
-      msg.sender,
+  function requestWithCallback() public payable returns (uint64 requestId) {
+    requestId = requestWithCallback(
       0x774358d3 // bytes4(keccak256("easyntropyFulfill(uint64,bytes32)"));
     );
   }
 
-  function requestWithCallback(bytes4 callbackSelector) external payable returns (uint64 requestId) {
-    if (msg.value < fee) revert NotEnoughEth();
+  function requestWithCallback(bytes4 callbackSelector) public payable returns (uint64 requestId) {
+    balances[msg.sender] += msg.value;
+    if (balances[msg.sender] < fee) revert NotEnoughEth();
 
     requestId = ++lastRequestId;
-    payable(vault).transfer(msg.value);
+    reservedFunds[msg.sender] += fee;
+    requestFees[requestId] = fee;
 
     emit RequestSubmitted(requestId, msg.sender, callbackSelector);
   }
@@ -64,11 +65,20 @@ contract Easyntropy is IEasyntropy {
     bytes32 externalSeed,
     uint64 externalSeedId
   ) public onlyVault {
+    uint256 requestFee = requestFees[requestId];
+    if (balances[requester] < requestFee) revert NotEnoughEth();
+
+    balances[requester] -= requestFee;
+    reservedFunds[requester] -= requestFee;
+    delete requestFees[requestId];
+
+    payable(vault).transfer(requestFee);
+
     EasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed, externalSeedId);
   }
 
   //
-  // money managment
+  // money managment owner
   function setVault(address _vault) public onlyOwner {
     vault = _vault;
   }
@@ -77,8 +87,22 @@ contract Easyntropy is IEasyntropy {
     fee = _fee;
   }
 
-  function withdraw(uint256 amount) public onlyOwner {
-    payable(owner).transfer(amount);
+  //
+  // money managment users
+  function withdraw(uint256 amount) public {
+    if (amount > balances[msg.sender] - reservedFunds[msg.sender]) revert NotEnoughEth();
+
+    balances[msg.sender] -= amount;
+    emit FundsWithdrawn(msg.sender, amount);
+    payable(msg.sender).transfer(amount);
   }
-  receive() external payable {}
+
+  function deposit() public payable {
+    balances[msg.sender] += msg.value;
+    emit DepositReceived(msg.sender, msg.value);
+  }
+
+  receive() external payable {
+    deposit();
+  }
 }
