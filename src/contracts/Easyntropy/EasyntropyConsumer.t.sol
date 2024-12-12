@@ -13,17 +13,17 @@ contract EasyntropyConsumerTest is Test {
   Easyntropy private easyntropy;
   EasyntropyConsumer private subject;
   address public owner;
-  address public vault;
+  address public executor;
   address public user;
 
   function setUp() public {
     owner = makeAddr("owner");
     user = makeAddr("user");
-    vault = makeAddr("vault");
+    executor = makeAddr("executor");
     vm.deal(user, 1000 ether);
 
     __prank(owner);
-    easyntropy = new Easyntropy(vault, 1 wei);
+    easyntropy = new Easyntropy(executor, 1 wei);
     subject = new EasyntropyConsumerDummy(address(easyntropy));
     __prank(user);
   }
@@ -47,7 +47,7 @@ contract EasyntropyConsumerTest is Test {
   }
 
   function test__easyntropyFulfill_CallsContractDefaultCallback() public {
-    __prank(vault);
+    __prank(executor);
 
     vm.expectEmit(true, false, false, false);
     emit EasyntropyConsumerDummy.FulfillmentSucceeded();
@@ -71,7 +71,7 @@ contract EasyntropyConsumerTest is Test {
   }
 
   function test__easyntropyFulfill_EmitsFailEventWhenCallbackIsNotDefined() public {
-    __prank(vault);
+    __prank(executor);
 
     vm.expectEmit(true, true, true, true);
     emit EasyntropyConsumer.FulfillmentFailed(
@@ -92,7 +92,7 @@ contract EasyntropyConsumerTest is Test {
   }
 
   function test__easyntropyFulfill_CallsContractCustomCallback() public {
-    __prank(vault);
+    __prank(executor);
 
     vm.expectEmit(true, false, false, false);
     emit EasyntropyConsumerDummy.CustomFulfillmentSucceeded();
@@ -116,7 +116,7 @@ contract EasyntropyConsumerTest is Test {
   }
 
   function test__easyntropyFulfill_CallsContractWithCustomCalculateSeed() public {
-    __prank(vault);
+    __prank(executor);
     subject = new EasyntropyConsumerDummyCustomCalculateSeed(address(easyntropy));
 
     vm.expectEmit(true, false, false, false);

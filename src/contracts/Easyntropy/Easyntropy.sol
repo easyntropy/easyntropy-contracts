@@ -7,7 +7,7 @@ import "./EasyntropyConsumer.sol";
 
 contract Easyntropy is IEasyntropy {
   address public owner;
-  address public vault;
+  address public executor;
   uint64 public lastRequestId = 0;
 
   uint256 public fee;
@@ -26,13 +26,13 @@ contract Easyntropy is IEasyntropy {
     _;
   }
 
-  modifier onlyVault() {
-    if (msg.sender != vault) revert PermissionDenied();
+  modifier onlyExecutor() {
+    if (msg.sender != executor) revert PermissionDenied();
     _;
   }
 
-  constructor(address _vault, uint256 _fee) {
-    vault = _vault;
+  constructor(address _executor, uint256 _fee) {
+    executor = _executor;
     fee = _fee;
     owner = msg.sender;
   }
@@ -64,7 +64,7 @@ contract Easyntropy is IEasyntropy {
     bytes4 callbackSelector,
     bytes32 externalSeed,
     uint64 externalSeedId
-  ) public onlyVault {
+  ) public onlyExecutor {
     uint256 requestFee = requestFees[requestId];
     if (balances[requester] < requestFee) revert NotEnoughEth();
 
@@ -72,15 +72,15 @@ contract Easyntropy is IEasyntropy {
     reservedFunds[requester] -= requestFee;
     delete requestFees[requestId];
 
-    payable(vault).transfer(requestFee);
+    payable(executor).transfer(requestFee);
 
     EasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed, externalSeedId);
   }
 
   //
   // money managment owner
-  function setVault(address _vault) public onlyOwner {
-    vault = _vault;
+  function setExecutor(address _executor) public onlyOwner {
+    executor = _executor;
   }
 
   function setFee(uint256 _fee) public onlyOwner {
