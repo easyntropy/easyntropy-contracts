@@ -12,18 +12,18 @@ import { EasyntropyConsumer } from "./EasyntropyConsumer.sol";
 contract EasyntropyTest is Test {
   Easyntropy private subject;
   address public owner;
-  address public vault;
+  address public executor;
   address public user;
 
   function setUp() public {
     owner = makeAddr("owner");
     user = makeAddr("user");
-    vault = makeAddr("vault");
+    executor = makeAddr("executor");
     vm.deal(owner, 1 ether);
     vm.deal(user, 1 ether);
 
     __prank(owner);
-    subject = new Easyntropy(vault, 1 wei);
+    subject = new Easyntropy(executor, 1 wei);
 
     __prank(user);
   }
@@ -48,19 +48,19 @@ contract EasyntropyTest is Test {
     subject.setFee(10 wei);
   }
 
-  function test_setVault_SetsVault() public {
+  function test_setExecutor_SetsExecutor() public {
     __prank(owner);
 
-    address newVault = makeAddr("newVault");
-    subject.setVault(newVault);
-    assertEq(subject.vault(), newVault);
+    address newExecutor = makeAddr("newExecutor");
+    subject.setExecutor(newExecutor);
+    assertEq(subject.executor(), newExecutor);
   }
 
-  function test_setVault_FailsWhenExecutedByNotOwner() public {
-    address newVault = makeAddr("newVault");
+  function test_setExecutor_FailsWhenExecutedByNotOwner() public {
+    address newExecutor = makeAddr("newExecutor");
 
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
-    subject.setVault(newVault);
+    subject.setExecutor(newExecutor);
   }
 
   function test_withdraw_WithdrawsFunds() public {
@@ -233,7 +233,7 @@ contract EasyntropyTest is Test {
     subject.requestWithCallback{ value: fee }(callbackSelector);
   }
 
-  function test_responseWithCallback__FailsWhenExecutedByNotVault() public {
+  function test_responseWithCallback__FailsWhenExecutedByNotExecutor() public {
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
     subject.responseWithCallback(
       1, // requestId
@@ -250,7 +250,7 @@ contract EasyntropyTest is Test {
     uint256 fee = easyntropyConsumer.entropyFee();
     uint64 requestId = easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
 
-    __prank(vault);
+    __prank(executor);
     vm.expectEmit(true, true, true, true);
     emit EasyntropyConsumerDummy.FulfillmentSucceeded();
 
@@ -270,7 +270,7 @@ contract EasyntropyTest is Test {
     assertEq(true, true);
   }
 
-  function test_responseWithCallback__TransfersReservedFundsToVault() public {
+  function test_responseWithCallback__TransfersReservedFundsToExecutor() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
     uint256 fee = easyntropyConsumer.entropyFee();
@@ -278,9 +278,9 @@ contract EasyntropyTest is Test {
 
     assertEq(subject.balances(address(easyntropyConsumer)), fee);
     assertEq(subject.reservedFunds(address(easyntropyConsumer)), fee);
-    assertEq(vault.balance, 0);
+    assertEq(executor.balance, 0);
 
-    __prank(vault);
+    __prank(executor);
     subject.responseWithCallback(
       requestId,
       address(easyntropyConsumer), // requester
@@ -290,7 +290,7 @@ contract EasyntropyTest is Test {
     );
     assertEq(subject.balances(address(easyntropyConsumer)), 0);
     assertEq(subject.reservedFunds(address(easyntropyConsumer)), 0);
-    assertEq(vault.balance, fee);
+    assertEq(executor.balance, fee);
   }
 
   // private
