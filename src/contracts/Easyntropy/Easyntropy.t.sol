@@ -28,27 +28,27 @@ contract EasyntropyTest is Test {
     __prank(user);
   }
 
-  function test_constructor_SetsInitialFee() public view {
+  function test_constructor_setsInitialFee() public view {
     assertEq(subject.fee(), 1 wei);
   }
 
-  function test_constructor_SetsOwner() public view {
+  function test_constructor_setsOwner() public view {
     assertEq(subject.owner(), owner);
   }
 
-  function test_setFee_SetsFee() public {
+  function test_setFee_setsFee() public {
     __prank(owner);
 
     subject.setFee(10 wei);
     assertEq(subject.fee(), 10 wei);
   }
 
-  function test_setFee_FailsWhenExecutedByNotOwner() public {
+  function test_setFee_failsWhenExecutedByNotOwner() public {
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
     subject.setFee(10 wei);
   }
 
-  function test_setExecutor_SetsExecutor() public {
+  function test_setExecutor_setsExecutor() public {
     __prank(owner);
 
     address newExecutor = makeAddr("newExecutor");
@@ -56,14 +56,14 @@ contract EasyntropyTest is Test {
     assertEq(subject.executor(), newExecutor);
   }
 
-  function test_setExecutor_FailsWhenExecutedByNotOwner() public {
+  function test_setExecutor_failsWhenExecutedByNotOwner() public {
     address newExecutor = makeAddr("newExecutor");
 
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
     subject.setExecutor(newExecutor);
   }
 
-  function test_withdraw_WithdrawsFunds() public {
+  function test_withdraw_withdrawsFunds() public {
     subject.deposit{ value: 10 wei }();
     subject.requestWithCallback();
     assertEq(user.balance, 999999999999999990 wei);
@@ -77,14 +77,14 @@ contract EasyntropyTest is Test {
     assertEq(subject.reservedFunds(user), 1 wei);
   }
 
-  function test_withdraw_FailsWhenNotFunds() public {
+  function test_withdraw_failsWhenNotFunds() public {
     assertEq(subject.balances(user), 0 wei);
 
     vm.expectRevert(Easyntropy.NotEnoughEth.selector);
     subject.withdraw(10 wei);
   }
 
-  function test_withdraw_FailsWhenNotEnoughFunds() public {
+  function test_withdraw_failsWhenNotEnoughFunds() public {
     subject.deposit{ value: 1 wei }();
     assertEq(subject.balances(user), 1 wei);
 
@@ -92,7 +92,7 @@ contract EasyntropyTest is Test {
     subject.withdraw(10 wei);
   }
 
-  function test_withdraw_FailsWhenNotEnoughFundsBecauseReserved() public {
+  function test_withdraw_failsWhenNotEnoughFundsBecauseReserved() public {
     subject.deposit{ value: 1 wei }();
     subject.requestWithCallback();
     assertEq(subject.balances(user), 1 wei);
@@ -102,20 +102,20 @@ contract EasyntropyTest is Test {
     subject.withdraw(10 wei);
   }
 
-  function test_deposit_DepositsFundsToSender() public {
+  function test_deposit_depositsFundsToSender() public {
     assertEq(subject.balances(user), 0);
     subject.deposit{ value: 0.5 ether }();
     assertEq(subject.balances(user), 0.5 ether);
   }
 
-  function test_deposit_EmitsDepositedEvent() public {
+  function test_deposit_emitsDepositedEvent() public {
     vm.expectEmit(true, true, true, true);
     emit Easyntropy.DepositReceived(user, 0.5 ether);
 
     subject.deposit{ value: 0.5 ether }();
   }
 
-  function test_requestWithCallback_FailsWhenThereIsNotEnoughBalance() public {
+  function test_requestWithCallback_failsWhenThereIsNotEnoughBalance() public {
     uint256 fee = subject.fee();
 
     subject.deposit{ value: fee - 1 wei }();
@@ -123,7 +123,7 @@ contract EasyntropyTest is Test {
     subject.requestWithCallback{ value: 0 }();
   }
 
-  function test_requestWithCallback_BumpsRequestId() public {
+  function test_requestWithCallback_bumpsRequestId() public {
     uint256 fee = subject.fee();
 
     assertEq(subject.lastRequestId(), 0);
@@ -131,7 +131,7 @@ contract EasyntropyTest is Test {
     assertEq(subject.lastRequestId(), 1);
   }
 
-  function test_requestWithCallback_CreditsSenderAccount() public {
+  function test_requestWithCallback_creditsSenderAccount() public {
     uint256 fee = subject.fee();
 
     assertEq(subject.balances(user), 0);
@@ -141,7 +141,7 @@ contract EasyntropyTest is Test {
     assertEq(subject.reservedFunds(user), fee);
   }
 
-  function test_requestWithCallback_CreditsSenderAccountSentMoreThanFee() public {
+  function test_requestWithCallback_creditsSenderAccountSentMoreThanFee() public {
     uint256 fee = subject.fee();
     uint256 sentAmount = fee + 1 wei;
 
@@ -152,14 +152,14 @@ contract EasyntropyTest is Test {
     assertEq(subject.reservedFunds(user), fee);
   }
 
-  function test_requestWithCallback_StoresFeeData() public {
+  function test_requestWithCallback_storesFeeData() public {
     uint256 fee = subject.fee();
 
     uint64 requestId = subject.requestWithCallback{ value: fee }();
     assertEq(subject.requestFees(requestId), fee);
   }
 
-  function test_requestWithCallback_EmitsEvent() public {
+  function test_requestWithCallback_emitsEvent() public {
     uint256 fee = subject.fee();
 
     vm.expectEmit(true, true, true, true);
@@ -171,7 +171,7 @@ contract EasyntropyTest is Test {
     subject.requestWithCallback{ value: fee }();
   }
 
-  function test_requestWithCallbackCustomCallback_FailsWhenThereIsNotEnoughBalance() public {
+  function test_requestWithCallbackCustomCallback_failsWhenThereIsNotEnoughBalance() public {
     uint256 fee = subject.fee();
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
 
@@ -180,7 +180,7 @@ contract EasyntropyTest is Test {
     subject.requestWithCallback{ value: 0 }(callbackSelector);
   }
 
-  function test_requestWithCallbackCustomCallback_BumpsRequestId() public {
+  function test_requestWithCallbackCustomCallback_bumpsRequestId() public {
     uint256 fee = subject.fee();
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
 
@@ -189,7 +189,7 @@ contract EasyntropyTest is Test {
     assertEq(subject.lastRequestId(), 1);
   }
 
-  function test_requestWithCallbackCustomCallback_CreditsSenderAccount() public {
+  function test_requestWithCallbackCustomCallback_creditsSenderAccount() public {
     uint256 fee = subject.fee();
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
 
@@ -200,7 +200,7 @@ contract EasyntropyTest is Test {
     assertEq(subject.reservedFunds(user), fee);
   }
 
-  function test_requestWithCallbackCustomCallback_CreditsSenderAccountSentMoreThanFee() public {
+  function test_requestWithCallbackCustomCallback_creditsSenderAccountSentMoreThanFee() public {
     uint256 fee = subject.fee();
     uint256 sentAmount = fee + 1 wei;
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
@@ -212,7 +212,7 @@ contract EasyntropyTest is Test {
     assertEq(subject.reservedFunds(user), fee);
   }
 
-  function test_requestWithCallbackCustomCallback_StoresFeeData() public {
+  function test_requestWithCallbackCustomCallback_storesFeeData() public {
     uint256 fee = subject.fee();
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
 
@@ -220,7 +220,7 @@ contract EasyntropyTest is Test {
     assertEq(subject.requestFees(requestId), fee);
   }
 
-  function test_requestWithCallbackCustomCallback_EmitsEvent() public {
+  function test_requestWithCallbackCustomCallback_emitsEvent() public {
     uint256 fee = subject.fee();
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
 
@@ -233,7 +233,7 @@ contract EasyntropyTest is Test {
     subject.requestWithCallback{ value: fee }(callbackSelector);
   }
 
-  function test_responseWithCallback__FailsWhenExecutedByNotExecutor() public {
+  function test_responseWithCallback_failsWhenExecutedByNotExecutor() public {
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
     subject.responseWithCallback(
       1, // requestId
@@ -244,7 +244,7 @@ contract EasyntropyTest is Test {
     );
   }
 
-  function test_responseWithCallback__CallsCallback() public {
+  function test_responseWithCallback_callsCallback() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
     uint256 fee = easyntropyConsumer.entropyFee();
@@ -263,14 +263,14 @@ contract EasyntropyTest is Test {
     );
   }
 
-  function test_responseWithCallback__FailsIfNotEnoughBalance() public pure {
+  function test_responseWithCallback_failsIfNotEnoughBalance() public pure {
     // This cant happen because:
     // - you cant request rng without paying enough fee
     // - you cant withdraw reserved funds
     assertEq(true, true);
   }
 
-  function test_responseWithCallback__TransfersReservedFundsToExecutor() public {
+  function test_responseWithCallback_transfersReservedFundsToExecutor() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
     uint256 fee = easyntropyConsumer.entropyFee();

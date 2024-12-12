@@ -25,21 +25,21 @@ contract EasyntropyDemoTest is Test {
     subject = new EasyntropyDemo(address(easyntropy));
   }
 
-  function test_constructor_SetsEntropyAddresses() public view {
+  function test_constructor_setsEntropyAddresses() public view {
     assertEq(address(subject.entropy()), address(easyntropy));
   }
 
-  function test_entropyFee_ReturnsExpectedFeeFuzzy(uint256 fee) public {
+  function test_entropyFee_returnsExpectedFeeFuzzy(uint256 fee) public {
     easyntropy.setFee(fee);
     assertEq(subject.entropyFee(), easyntropy.fee());
   }
 
-  function test_requestRandomValue_FailsIfNotEnoughMoneyIsSent() public {
+  function test_requestRandomValue_failsIfNotEnoughMoneyIsSent() public {
     vm.expectRevert(EasyntropyDemo.NotEnoughEth.selector);
     subject.requestRandomValue{ value: 0 }();
   }
 
-  function test_requestRandomValue_EmitsRandomValueRequestedEvent() public {
+  function test_requestRandomValue_emitsRandomValueRequestedEvent() public {
     uint256 fee = subject.entropyFee();
 
     vm.expectEmit(true, true, false, false);
@@ -47,7 +47,7 @@ contract EasyntropyDemoTest is Test {
     subject.requestRandomValue{ value: fee }();
   }
 
-  function test_requestRandomValue_AddsEntryToPendingRequests() public {
+  function test_requestRandomValue_addsEntryToPendingRequests() public {
     uint256 fee = subject.entropyFee();
 
     uint64 requestId = subject.requestRandomValue{ value: fee }();
@@ -56,7 +56,7 @@ contract EasyntropyDemoTest is Test {
     assertEq(pendingRequest, true);
   }
 
-  function test_requestRandomValue_CallsEasyntropy() public {
+  function test_requestRandomValue_callsEasyntropy() public {
     uint256 fee = subject.entropyFee();
 
     vm.expectEmit(true, true, true, true);
@@ -68,12 +68,12 @@ contract EasyntropyDemoTest is Test {
     subject.requestRandomValue{ value: fee }();
   }
 
-  function test_requestRandomValueCustomCallback_FailsIfNotEnoughMoneyIsSent() public {
+  function test_requestRandomValueCustomCallback_failsIfNotEnoughMoneyIsSent() public {
     vm.expectRevert(EasyntropyDemo.NotEnoughEth.selector);
     subject.requestRandomValueCustomCallback{ value: 0 }();
   }
 
-  function test_requestRandomValueCustomCallback_EmitsRandomValueRequestedEvent() public {
+  function test_requestRandomValueCustomCallback_emitsRandomValueRequestedEvent() public {
     uint256 fee = subject.entropyFee();
 
     vm.expectEmit(true, true, false, false);
@@ -81,7 +81,7 @@ contract EasyntropyDemoTest is Test {
     subject.requestRandomValueCustomCallback{ value: fee }();
   }
 
-  function test_requestRandomValueCustomCallback_AddsEntryToPendingRequests() public {
+  function test_requestRandomValueCustomCallback_addsEntryToPendingRequests() public {
     uint256 fee = subject.entropyFee();
 
     uint64 requestId = subject.requestRandomValueCustomCallback{ value: fee }();
@@ -90,7 +90,7 @@ contract EasyntropyDemoTest is Test {
     assertEq(pendingRequest, true);
   }
 
-  function test_requestRandomValueCustomCallback_CallsEasyntropy() public {
+  function test_requestRandomValueCustomCallback_callsEasyntropy() public {
     uint256 fee = subject.entropyFee();
 
     vm.expectEmit(true, true, true, true);
