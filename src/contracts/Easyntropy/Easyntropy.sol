@@ -6,6 +6,8 @@ import "./IEasyntropy.sol";
 import "./EasyntropyConsumer.sol";
 
 contract Easyntropy is IEasyntropy {
+  uint256 public constant RELEASE_FUNDS_AFTER_BLOCKS = 50000; // ~1 week
+
   address public owner;
   address public executor;
   uint64 public lastRequestId = 0;
@@ -13,6 +15,7 @@ contract Easyntropy is IEasyntropy {
   uint256 public fee;
   mapping(address requester => uint256 balance) public balances;
   mapping(address requester => uint256 reservedBalance) public reservedFunds;
+  mapping(address requester => uint256 lastResponseBlockNumber) public lastResponses;
   mapping(uint64 requestId => uint256 fee) public requestFees;
 
   event RequestSubmitted(uint64 indexed requestId, address indexed requester, bytes4 callbackSelector);
@@ -70,6 +73,7 @@ contract Easyntropy is IEasyntropy {
 
     balances[requester] -= requestFee;
     reservedFunds[requester] -= requestFee;
+    lastResponses[requester] = block.number;
     delete requestFees[requestId];
 
     payable(executor).transfer(requestFee);
@@ -90,6 +94,13 @@ contract Easyntropy is IEasyntropy {
   //
   // money managment users
   function withdraw(uint256 amount) public {
+    // Release reserved funds after RELEASE_FUNDS_AFTER_BLOCKS of oracle inactivity
+    // to allow users to withdraw all funds in case of a major oracle failure or
+    // project sunsetting.
+    if ((block.number - lastResponses[msg.sender]) > RELEASE_FUNDS_AFTER_BLOCKS) {
+      reservedFunds[msg.sender] = 0;
+    }
+
     if (amount > balances[msg.sender] - reservedFunds[msg.sender]) revert NotEnoughEth();
 
     balances[msg.sender] -= amount;
