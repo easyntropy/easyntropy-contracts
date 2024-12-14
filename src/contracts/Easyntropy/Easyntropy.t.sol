@@ -244,6 +244,13 @@ contract EasyntropyTest is Test {
     );
   }
 
+  function test_responseWithCallback_failsIfNotEnoughBalance() public pure {
+    // This cant happen because:
+    // - you cant request rng without paying enough fee
+    // - you cant withdraw reserved funds
+    assertEq(true, true);
+  }
+
   function test_responseWithCallback_callsCallback() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
@@ -263,11 +270,23 @@ contract EasyntropyTest is Test {
     );
   }
 
-  function test_responseWithCallback_failsIfNotEnoughBalance() public pure {
-    // This cant happen because:
-    // - you cant request rng without paying enough fee
-    // - you cant withdraw reserved funds
-    assertEq(true, true);
+  function test_responseWithCallback_storesBlockNumber() public {
+    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+
+    uint256 fee = easyntropyConsumer.entropyFee();
+    uint64 requestId = easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), 0);
+
+    __prank(executor);
+    subject.responseWithCallback(
+      requestId,
+      address(easyntropyConsumer), // requester
+      bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
+      bytes32(uint256(2)), // externalSeed
+      3 // externalSeedId
+    );
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), block.number);
   }
 
   function test_responseWithCallback_transfersReservedFundsToExecutor() public {

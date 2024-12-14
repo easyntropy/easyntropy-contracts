@@ -13,6 +13,7 @@ contract Easyntropy is IEasyntropy {
   uint256 public fee;
   mapping(address requester => uint256 balance) public balances;
   mapping(address requester => uint256 reservedBalance) public reservedFunds;
+  mapping(address requester => uint256 lastResponseBlockNumber) public lastResponses;
   mapping(uint64 requestId => uint256 fee) public requestFees;
 
   event RequestSubmitted(uint64 indexed requestId, address indexed requester, bytes4 callbackSelector);
@@ -70,6 +71,7 @@ contract Easyntropy is IEasyntropy {
 
     balances[requester] -= requestFee;
     reservedFunds[requester] -= requestFee;
+    lastResponses[requester] = block.number;
     delete requestFees[requestId];
 
     payable(executor).transfer(requestFee);
