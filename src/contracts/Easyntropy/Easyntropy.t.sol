@@ -77,7 +77,34 @@ contract EasyntropyTest is Test {
     assertEq(subject.reservedFunds(user), 1 wei);
   }
 
-  function test_withdraw_failsWhenNotFunds() public {
+  function test_withdraw_emitsFundsWithdrawnEvent() public {
+    subject.deposit{ value: 10 wei }();
+
+    vm.expectEmit(true, true, true, true);
+    emit Easyntropy.FundsWithdrawn(user, 5 wei);
+    subject.withdraw(5 wei);
+  }
+
+  function test_withdraw_releasesAndWithdrawsAlsoReserved() public {
+    subject.deposit{ value: 1 wei }();
+    subject.requestWithCallback();
+
+    assertEq(user.balance, 999999999999999999 wei);
+    assertEq(subject.balances(user), 1 wei);
+    assertEq(subject.reservedFunds(user), 1 wei);
+
+    vm.expectRevert(Easyntropy.NotEnoughEth.selector);
+    subject.withdraw(1 wei);
+
+    vm.roll(block.number + subject.RELEASE_FUNDS_AFTER_BLOCKS());
+    subject.withdraw(1 wei);
+
+    assertEq(user.balance, 1 ether);
+    assertEq(subject.balances(user), 0 wei);
+    assertEq(subject.reservedFunds(user), 0 wei);
+  }
+
+  function test_withdraw_failsWhenNoFunds() public {
     assertEq(subject.balances(user), 0 wei);
 
     vm.expectRevert(Easyntropy.NotEnoughEth.selector);
