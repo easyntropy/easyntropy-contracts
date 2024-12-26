@@ -26,9 +26,9 @@ services:
     ports:
       - "8545:8545"
     volumes:
-      - ../../src/:/usr/app/src
+      - ../../:/usr/app
     command: |
-      'anvil -p 8545 --host "0.0.0.0" --allow-origin "*"'
+      'anvil -p 8545 --host "0.0.0.0" --allow-origin "*" --mnemonic "test test test test test test test test test test test junk" $([ -f "/usr/app/.tmp/anvil/state.json" ] && echo "--load-state /usr/app/.tmp/anvil/state.json") --dump-state /usr/app/.tmp/anvil/state.json'
 
   shell:
     profiles: ["utils"]
