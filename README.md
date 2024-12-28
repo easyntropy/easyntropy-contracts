@@ -17,7 +17,7 @@ Dev env:
 Tests:
 
 ```bash
-./scripts/shell-docker.sh forge test -vvv
+./scripts/shell-docker.sh forge test --summary --detailed -vvv
 ./scripts/linters-check-docker.sh
 ```
 
