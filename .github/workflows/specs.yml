@@ -22,4 +22,4 @@ jobs:
 
       - name: Run specs
         run: |
-          ./scripts/shell-docker.sh forge test -vvv
+          ./scripts/shell-docker.sh forge test --summary --detailed -vvv
