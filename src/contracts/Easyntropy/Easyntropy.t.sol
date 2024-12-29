@@ -383,6 +383,50 @@ contract EasyntropyTest is Test {
     assertEq(executor.balance, fee);
   }
 
+  function test_reservedFundsWaitingPeriod_returnsRemainingBlocksWithResponseCase() public {
+    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+
+    uint256 fee = easyntropyConsumer.entropyFee();
+    uint64 requestId = easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+
+    vm.roll(1000);
+    __prank(executor);
+    subject.responseWithCallback(
+      requestId,
+      address(easyntropyConsumer), // requester
+      bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
+      bytes32(uint256(2)), // externalSeed
+      3 // externalSeedId
+    );
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), 1000);
+
+    vm.roll(2000);
+    assertEq(subject.reservedFundsWaitingPeriod(address(easyntropyConsumer)), subject.RELEASE_FUNDS_AFTER_BLOCKS() - 1000);
+  }
+
+  function test_reservedFundsWaitingPeriod_returnsRemainingBlocksNoResponseCase() public {
+    uint256 fee = subject.fee();
+
+    vm.roll(1000);
+    subject.requestWithCallback{ value: fee }();
+    assertEq(subject.lastResponses(user), 1000);
+
+    vm.roll(2000);
+    assertEq(subject.reservedFundsWaitingPeriod(user), subject.RELEASE_FUNDS_AFTER_BLOCKS() - 1000);
+  }
+
+  function test_reservedFundsWaitingPeriod_returnsZeroAfterPeriod() public {
+    uint256 fee = subject.fee();
+
+    vm.roll(1000);
+    subject.requestWithCallback{ value: fee }();
+    vm.roll(1000 + subject.RELEASE_FUNDS_AFTER_BLOCKS());
+    assertEq(subject.reservedFundsWaitingPeriod(user), 0);
+
+    vm.roll(10 * subject.RELEASE_FUNDS_AFTER_BLOCKS());
+    assertEq(subject.reservedFundsWaitingPeriod(user), 0);
+  }
+
   // private
   function __prank(address actor) public {
     vm.stopPrank();

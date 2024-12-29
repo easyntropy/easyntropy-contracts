@@ -101,11 +101,16 @@ contract Easyntropy is IEasyntropy {
 
   //
   // money managment users
+  function reservedFundsWaitingPeriod(address adr) public view returns (uint256 result) {
+    uint256 releaseBlock = lastResponses[adr] + RELEASE_FUNDS_AFTER_BLOCKS;
+    return block.number > releaseBlock ? 0 : (releaseBlock - block.number);
+  }
+
   function withdraw(uint256 amount) public {
     // Release reserved funds after RELEASE_FUNDS_AFTER_BLOCKS of oracle inactivity
     // to allow users to withdraw all funds in case of a major oracle failure or
     // project sunsetting.
-    if ((block.number - lastResponses[msg.sender]) > RELEASE_FUNDS_AFTER_BLOCKS) {
+    if (reservedFundsWaitingPeriod(msg.sender) == 0) {
       reservedFunds[msg.sender] = 0;
     }
 
