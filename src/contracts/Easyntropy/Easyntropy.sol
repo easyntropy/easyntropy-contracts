@@ -56,6 +56,14 @@ contract Easyntropy is IEasyntropy {
     reservedFunds[msg.sender] += fee;
     requestFees[requestId] = fee;
 
+    //
+    // To allow withdrawal of reserved funds (after the RELEASE_FUNDS_AFTER_BLOCKS period)
+    // in case of a response failure on a first request for a given address. We artificially
+    // set lastResponses to current block number. For details, examine reservedFundsWaitingPeriod()
+    if (lastResponses[msg.sender] == 0) {
+      lastResponses[msg.sender] = block.number;
+    }
+
     emit RequestSubmitted(requestId, msg.sender, callbackSelector);
   }
 
