@@ -85,7 +85,7 @@ contract EasyntropyTest is Test {
     subject.withdraw(5 wei);
   }
 
-  function test_withdraw_releasesAndWithdrawsAlsoReserved() public {
+  function test_withdraw_releasesAndWithdrawsAlsoReservedFunds() public {
     subject.deposit{ value: 1 wei }();
     subject.requestWithCallback();
 
@@ -96,7 +96,7 @@ contract EasyntropyTest is Test {
     vm.expectRevert(Easyntropy.NotEnoughEth.selector);
     subject.withdraw(1 wei);
 
-    vm.roll(block.number + subject.RELEASE_FUNDS_AFTER_BLOCKS());
+    vm.roll(block.number + subject.RELEASE_FUNDS_AFTER_BLOCKS() + 1);
     subject.withdraw(1 wei);
 
     assertEq(user.balance, 1 ether);
@@ -198,6 +198,26 @@ contract EasyntropyTest is Test {
     subject.requestWithCallback{ value: fee }();
   }
 
+  function test_requestWithCallback_setLastResponseBlockNrForInitialRequest() public {
+    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+
+    uint256 fee = easyntropyConsumer.entropyFee();
+
+    uint256 oldBlockNumber = block.number;
+
+    // First request will set the lastResponseBlockNr to the current block number
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), 0);
+    easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
+
+    vm.roll(block.number + 10);
+
+    // Second request wont modify the lastResponseBlockNr
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
+    easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
+  }
+
   function test_requestWithCallbackCustomCallback_failsWhenThereIsNotEnoughBalance() public {
     uint256 fee = subject.fee();
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
@@ -260,6 +280,27 @@ contract EasyntropyTest is Test {
     subject.requestWithCallback{ value: fee }(callbackSelector);
   }
 
+  function test_requestWithCallbackCustomCallback_setLastResponseBlockNrForInitialRequest() public {
+    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+
+    uint256 fee = easyntropyConsumer.entropyFee();
+    bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
+
+    uint256 oldBlockNumber = block.number;
+
+    // First request will set the lastResponseBlockNr to the current block number
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), 0);
+    easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }(callbackSelector);
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
+
+    vm.roll(block.number + 10);
+
+    // Second request wont modify the lastResponseBlockNr
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
+    easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }(callbackSelector);
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
+  }
+
   function test_responseWithCallback_failsWhenExecutedByNotExecutor() public {
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
     subject.responseWithCallback(
@@ -301,9 +342,12 @@ contract EasyntropyTest is Test {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
     uint256 fee = easyntropyConsumer.entropyFee();
-    uint64 requestId = easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
 
     assertEq(subject.lastResponses(address(easyntropyConsumer)), 0);
+    uint64 requestId = easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+    assertEq(subject.lastResponses(address(easyntropyConsumer)), block.number);
+
+    vm.roll(block.number + 10);
 
     __prank(executor);
     subject.responseWithCallback(
@@ -356,5 +400,9 @@ contract EasyntropyConsumerDummy is EasyntropyConsumer {
 
   function internal__entropyRequestWithCallback() public payable returns (uint64 requestId) {
     requestId = entropyRequestWithCallback();
+  }
+
+  function internal__entropyRequestWithCallback(bytes4 callbackSelector) public payable returns (uint64 requestId) {
+    requestId = entropyRequestWithCallback(callbackSelector);
   }
 }
