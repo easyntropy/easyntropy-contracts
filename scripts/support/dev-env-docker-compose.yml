@@ -2,7 +2,16 @@ services:
   remixd:
     build:
       context: .
-      dockerfile: ./dev-env.dockerfile
+      dockerfile_inline: |
+        FROM node:20-slim
+        WORKDIR /usr/app
+        RUN apt-get update \
+         && apt-get install -y bash
+
+        # Install remixd (sharing files from host to remix editor)
+        RUN npm install -g @remix-project/remixd \
+         && sed -i s/127.0.0.1/0.0.0.0/g /usr/local/lib/node_modules/@remix-project/remixd/src/websocket.js
+
     entrypoint: /bin/bash -lc
     ports:
       - "65520:65520"
@@ -21,20 +30,43 @@ services:
   anvil:
     build:
       context: .
-      dockerfile: ./dev-env.dockerfile
+      dockerfile_inline: |
+        FROM debian:bookworm-slim
+        WORKDIR /usr/app
+        RUN apt-get update \
+         && apt-get install -y curl git
+
+        # Install foundry
+        RUN curl -L https://foundry.paradigm.xyz | bash \
+         && export PATH="$PATH:/root/.foundry/bin" \
+         && foundryup
+
     entrypoint: /bin/bash -lc
     ports:
       - "8545:8545"
     volumes:
       - ../../:/usr/app
     command: |
-      'anvil -p 8545 --host "0.0.0.0" --allow-origin "*" --mnemonic "test test test test test test test test test test test junk" $([ -f "/usr/app/.tmp/anvil/state.json" ] && echo "--load-state /usr/app/.tmp/anvil/state.json") --dump-state /usr/app/.tmp/anvil/state.json'
+      '
+      echo -e "\n!!\n!! Anvil state will be saved/loaded from .tmp/anvil/state.json\n!!\n" ; \
+      anvil -p 8545 --host "0.0.0.0" --allow-origin "*" --mnemonic "test test test test test test test test test test test junk" $([ -f "/usr/app/.tmp/anvil/state.json" ] && echo "--load-state /usr/app/.tmp/anvil/state.json") --dump-state /usr/app/.tmp/anvil/state.json
+      '
 
   shell:
     profiles: ["utils"]
     build:
       context: .
-      dockerfile: ./dev-env.dockerfile
+      dockerfile_inline: |
+        FROM node:20-slim
+        WORKDIR /usr/app
+        RUN apt-get update \
+         && apt-get install -y curl git
+
+        # Install foundry
+        RUN curl -L https://foundry.paradigm.xyz | bash \
+         && export PATH="$PATH:/root/.foundry/bin" \
+         && foundryup
+
     entrypoint: /bin/bash -lc
     volumes:
       - dev-env-node-modules:/usr/app/node_modules
