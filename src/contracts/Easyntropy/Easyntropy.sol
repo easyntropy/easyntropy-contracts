@@ -9,7 +9,7 @@ contract Easyntropy is IEasyntropy {
   uint256 public constant RELEASE_FUNDS_AFTER_BLOCKS = 50000; // ~1 week
 
   address public owner;
-  address public executor;
+  mapping(address executor => bool allowed) public executors;
   uint64 public lastRequestId = 0;
 
   uint256 public fee;
@@ -30,12 +30,12 @@ contract Easyntropy is IEasyntropy {
   }
 
   modifier onlyExecutor() {
-    if (msg.sender != executor) revert PermissionDenied();
+    if (!executors[msg.sender]) revert PermissionDenied();
     _;
   }
 
-  constructor(address _executor, uint256 _fee) {
-    executor = _executor;
+  constructor(address executor, uint256 _fee) {
+    executors[executor] = true;
     fee = _fee;
     owner = msg.sender;
   }
@@ -84,15 +84,19 @@ contract Easyntropy is IEasyntropy {
     lastResponses[requester] = block.number;
     delete requestFees[requestId];
 
-    payable(executor).transfer(requestFee);
+    payable(msg.sender).transfer(requestFee);
 
     EasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed, externalSeedId);
   }
 
   //
-  // money managment owner
-  function setExecutor(address _executor) public onlyOwner {
-    executor = _executor;
+  // contract managment
+  function addExecutor(address executor) public onlyOwner {
+    executors[executor] = true;
+  }
+
+  function removeExecutor(address executor) public onlyOwner {
+    delete executors[executor];
   }
 
   function setFee(uint256 _fee) public onlyOwner {

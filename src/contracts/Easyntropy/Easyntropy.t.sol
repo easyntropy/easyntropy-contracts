@@ -48,19 +48,31 @@ contract EasyntropyTest is Test {
     subject.setFee(10 wei);
   }
 
-  function test_setExecutor_setsExecutor() public {
+  function test_addExecutor_addsExecutor() public {
     __prank(owner);
 
     address newExecutor = makeAddr("newExecutor");
-    subject.setExecutor(newExecutor);
-    assertEq(subject.executor(), newExecutor);
+    subject.addExecutor(newExecutor);
+    assertTrue(subject.executors(newExecutor));
   }
 
-  function test_setExecutor_failsWhenExecutedByNotOwner() public {
+  function test_addExecutor_failsWhenExecutedByNotOwner() public {
     address newExecutor = makeAddr("newExecutor");
 
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
-    subject.setExecutor(newExecutor);
+    subject.addExecutor(newExecutor);
+  }
+
+  function test_removeExecutor_removesExecutor() public {
+    __prank(owner);
+
+    subject.removeExecutor(executor);
+    assertFalse(subject.executors(executor));
+  }
+
+  function test_removeExecutor_failsWhenExecutedByNotOwner() public {
+    vm.expectRevert(Easyntropy.PermissionDenied.selector);
+    subject.removeExecutor(executor);
   }
 
   function test_withdraw_withdrawsFunds() public {
