@@ -40,6 +40,7 @@ abstract contract EasyntropyConsumer {
   function entropyFee() public view returns (uint256 fee) {
     fee = entropy.fee();
   }
+
   // request handling
   function entropyRequestWithCallback() internal returns (uint64 requestId) {
     requestId = entropy.requestWithCallback{ value: entropyFee() }();

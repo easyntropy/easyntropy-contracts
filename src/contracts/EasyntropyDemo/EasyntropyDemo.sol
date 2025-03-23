@@ -19,7 +19,7 @@ contract EasyntropyDemo is EasyntropyConsumer {
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
 
   //
-  // entropy demo default fulfill callback
+  // --- entropy usage demo: default fulfill callback -------------------------
   function requestRandomValue() public payable returns (uint64 requestId) {
     if (msg.value < entropyFee()) revert NotEnoughEth();
 
@@ -38,7 +38,7 @@ contract EasyntropyDemo is EasyntropyConsumer {
   }
 
   //
-  // entropy demo custom fulfill callback
+  // --- entropy usage demo: custom fulfill callback --------------------------
   function requestRandomValueCustomCallback() public payable returns (uint64 requestId) {
     if (msg.value < entropyFee()) revert NotEnoughEth();
 
@@ -57,9 +57,12 @@ contract EasyntropyDemo is EasyntropyConsumer {
     emit RandomValueObtained(requestId, seed);
   }
 
+  //
+  // --- entropy usage demo: optional calculateSeed customisation -------------
   function calculateSeed(bytes32 externalSeed) internal pure override returns (bytes32 result) {
     result = externalSeed;
   }
+  // --------------------------------------------------------------------------
 
   //
   // money managment
