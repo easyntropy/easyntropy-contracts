@@ -28,6 +28,11 @@ abstract contract EasyntropyConsumer {
     _;
   }
 
+  modifier onlyEasyntropyOracle() {
+    if (msg.sender != address(entropy)) revert PermissionDenied();
+    _;
+  }
+
   constructor(address _entropy) {
     entropy = IEasyntropy(_entropy);
   }
@@ -35,6 +40,7 @@ abstract contract EasyntropyConsumer {
   function entropyFee() public view returns (uint256 fee) {
     fee = entropy.fee();
   }
+
   // request handling
   function entropyRequestWithCallback() internal returns (uint64 requestId) {
     requestId = entropy.requestWithCallback{ value: entropyFee() }();
@@ -45,9 +51,12 @@ abstract contract EasyntropyConsumer {
   }
 
   // response handling
-  function _easyntropyFulfill(uint64 requestId, bytes4 callbackSelector, bytes32 externalSeed, uint64 externalSeedId) external {
-    if (msg.sender != address(entropy)) revert PermissionDenied();
-
+  function _easyntropyFulfill(
+    uint64 requestId,
+    bytes4 callbackSelector,
+    bytes32 externalSeed,
+    uint64 externalSeedId
+  ) external onlyEasyntropyOracle {
     bytes32 seed = calculateSeed(externalSeed);
 
     // solhint-disable-next-line avoid-low-level-calls

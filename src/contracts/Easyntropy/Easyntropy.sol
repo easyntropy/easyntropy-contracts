@@ -108,8 +108,7 @@ contract Easyntropy is IEasyntropy {
 
   function withdraw(uint256 amount) public {
     // Release reserved funds after RELEASE_FUNDS_AFTER_BLOCKS of oracle inactivity
-    // to allow users to withdraw all funds in case of a major oracle failure or
-    // project sunsetting.
+    // to allow users to withdraw all funds in case of a major oracle failure.
     if (reservedFundsWaitingPeriod(msg.sender) == 0) {
       reservedFunds[msg.sender] = 0;
     }
