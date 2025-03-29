@@ -14,7 +14,7 @@ contract Easyntropy is IEasyntropy {
 
   uint256 public fee;
   mapping(address requester => uint256 balance) public balances;
-  mapping(address requester => uint256 reservedBalance) public reservedFunds;
+  mapping(address requester => uint256 reservedFund) public reservedFunds;
   mapping(address requester => uint256 lastResponseBlockNumber) public lastResponses;
   mapping(uint64 requestId => uint256 fee) public requestFees;
 
@@ -104,9 +104,9 @@ contract Easyntropy is IEasyntropy {
   }
 
   //
-  // money managment users
-  function reservedFundsWaitingPeriod(address adr) public view returns (uint256 result) {
-    uint256 releaseBlock = lastResponses[adr] + RELEASE_FUNDS_AFTER_BLOCKS;
+  // users money managment
+  function reservedFundsWaitingPeriod(address addr) public view returns (uint256 result) {
+    uint256 releaseBlock = lastResponses[addr] + RELEASE_FUNDS_AFTER_BLOCKS;
     return block.number > releaseBlock ? 0 : (releaseBlock - block.number);
   }
 
@@ -120,8 +120,8 @@ contract Easyntropy is IEasyntropy {
     if (amount > balances[msg.sender] - reservedFunds[msg.sender]) revert NotEnoughEth();
 
     balances[msg.sender] -= amount;
-    emit FundsWithdrawn(msg.sender, amount);
     payable(msg.sender).transfer(amount);
+    emit FundsWithdrawn(msg.sender, amount);
   }
 
   function deposit() public payable {
