@@ -120,8 +120,8 @@ contract Easyntropy is IEasyntropy {
     if (amount > balances[msg.sender] - reservedFunds[msg.sender]) revert NotEnoughEth();
 
     balances[msg.sender] -= amount;
-    emit FundsWithdrawn(msg.sender, amount);
     payable(msg.sender).transfer(amount);
+    emit FundsWithdrawn(msg.sender, amount);
   }
 
   function deposit() public payable {
