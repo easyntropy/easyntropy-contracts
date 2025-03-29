@@ -37,10 +37,24 @@ abstract contract EasyntropyConsumer {
     entropy = IEasyntropy(_entropy);
   }
 
+  //
+  // calculates the final seed.
+  //
+  // The externalSeed is the same for everyone within a single drand.love time window
+  // (approximately 3 seconds), so we need our own semi-random component. By default, this method
+  // is called to compute the final seed. If there are project-specific variables (for example, a
+  // player ID), feel free to override this method to incorporate them.
+  function calculateSeed(bytes32 externalSeed) internal view virtual returns (bytes32 result) {
+    result = keccak256(abi.encodePacked(externalSeed, block.number, tx.gasprice));
+  }
+
+  //
+  // utils
   function entropyFee() public view returns (uint256 fee) {
     fee = entropy.fee();
   }
 
+  //
   // request handling
   function entropyRequestWithCallback() internal returns (uint64 requestId) {
     requestId = entropy.requestWithCallback{ value: entropyFee() }();
@@ -50,6 +64,7 @@ abstract contract EasyntropyConsumer {
     requestId = entropy.requestWithCallback{ value: entropyFee() }(callbackSelector);
   }
 
+  //
   // response handling
   function _easyntropyFulfill(
     uint64 requestId,
@@ -66,9 +81,5 @@ abstract contract EasyntropyConsumer {
     } else {
       emit FulfillmentFailed(requestId, address(this), seed, externalSeed, externalSeedId);
     }
-  }
-
-  function calculateSeed(bytes32 externalSeed) internal view virtual returns (bytes32 result) {
-    result = keccak256(abi.encodePacked(externalSeed, block.number, tx.gasprice));
   }
 }
