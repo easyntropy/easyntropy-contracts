@@ -28,7 +28,7 @@ abstract contract EasyntropyConsumer {
     _;
   }
 
-  modifier onlyEasyntropyOracle() {
+  modifier _onlyEasyntropyOracle() {
     if (msg.sender != address(entropy)) revert PermissionDenied();
     _;
   }
@@ -71,7 +71,7 @@ abstract contract EasyntropyConsumer {
     bytes4 callbackSelector,
     bytes32 externalSeed,
     uint64 externalSeedId
-  ) external onlyEasyntropyOracle {
+  ) external _onlyEasyntropyOracle {
     bytes32 seed = calculateSeed(externalSeed);
 
     // solhint-disable-next-line avoid-low-level-calls
