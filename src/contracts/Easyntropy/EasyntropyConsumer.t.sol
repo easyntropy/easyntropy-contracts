@@ -32,8 +32,8 @@ contract EasyntropyConsumerTest is Test {
     assertEq(address(subject.entropy()), address(easyntropy));
   }
 
-  function test_entropyFee_returnsFee() public view {
-    assertEq(subject.entropyFee(), easyntropy.fee());
+  function test_easyntropyFee_returnsFee() public view {
+    assertEq(subject.easyntropyFee(), easyntropy.fee());
   }
 
   function test_easyntropyFulfill_failsIfCalledByNotEasyntropy() public {
@@ -140,7 +140,7 @@ contract EasyntropyConsumerTest is Test {
     );
   }
 
-  function test_entropyRequestWithCallback_callsEntropyAsSyntaxSugar() public {
+  function test_easyntropyRequestWithCallback_callsEntropyAsSyntaxSugar() public {
     EasyntropyConsumerDummy wrappedSubject = new EasyntropyConsumerDummy(address(easyntropy));
 
     payable(address(wrappedSubject)).transfer(10 ether);
@@ -152,10 +152,10 @@ contract EasyntropyConsumerTest is Test {
       0x774358d3 // bytes4(keccak256("easyntropyFulfill(uint64,bytes32)"));
     );
 
-    wrappedSubject.internal__entropyRequestWithCallback();
+    wrappedSubject.internal__easyntropyRequestWithCallback();
   }
 
-  function test_entropyRequestWithCallback_callsEntropyWithCustomCallbackAsSyntaxSugar() public {
+  function test_easyntropyRequestWithCallback_callsEntropyWithCustomCallbackAsSyntaxSugar() public {
     EasyntropyConsumerDummy wrappedSubject = new EasyntropyConsumerDummy(address(easyntropy));
 
     payable(address(wrappedSubject)).transfer(10 ether);
@@ -167,7 +167,7 @@ contract EasyntropyConsumerTest is Test {
       bytes4(keccak256("customFulfill(uint64,bytes32)")) // callbackSelector
     );
 
-    wrappedSubject.internal__entropyRequestWithCallback(wrappedSubject.customFulfill.selector);
+    wrappedSubject.internal__easyntropyRequestWithCallback(wrappedSubject.customFulfill.selector);
   }
 
   // private
@@ -190,12 +190,12 @@ contract EasyntropyConsumerDummy is EasyntropyConsumer {
     emit CustomFulfillmentSucceeded();
   }
 
-  function internal__entropyRequestWithCallback() public returns (uint64 requestId) {
-    requestId = entropyRequestWithCallback();
+  function internal__easyntropyRequestWithCallback() public returns (uint64 requestId) {
+    requestId = easyntropyRequestWithCallback();
   }
 
-  function internal__entropyRequestWithCallback(bytes4 callbackSelector) public returns (uint64 requestId) {
-    requestId = entropyRequestWithCallback(callbackSelector);
+  function internal__easyntropyRequestWithCallback(bytes4 callbackSelector) public returns (uint64 requestId) {
+    requestId = easyntropyRequestWithCallback(callbackSelector);
   }
   receive() external payable {}
 }

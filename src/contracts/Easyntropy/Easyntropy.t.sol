@@ -213,20 +213,20 @@ contract EasyntropyTest is Test {
   function test_requestWithCallback_setLastResponseBlockNrForInitialRequest() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
-    uint256 fee = easyntropyConsumer.entropyFee();
+    uint256 fee = easyntropyConsumer.easyntropyFee();
 
     uint256 oldBlockNumber = block.number;
 
     // First request will set the lastResponseBlockNr to the current block number
     assertEq(subject.lastResponses(address(easyntropyConsumer)), 0);
-    easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+    easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }();
     assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
 
     vm.roll(block.number + 10);
 
     // Second request wont modify the lastResponseBlockNr
     assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
-    easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+    easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }();
     assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
   }
 
@@ -295,21 +295,21 @@ contract EasyntropyTest is Test {
   function test_requestWithCallbackCustomCallback_setLastResponseBlockNrForInitialRequest() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
-    uint256 fee = easyntropyConsumer.entropyFee();
+    uint256 fee = easyntropyConsumer.easyntropyFee();
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
 
     uint256 oldBlockNumber = block.number;
 
     // First request will set the lastResponseBlockNr to the current block number
     assertEq(subject.lastResponses(address(easyntropyConsumer)), 0);
-    easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }(callbackSelector);
+    easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }(callbackSelector);
     assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
 
     vm.roll(block.number + 10);
 
     // Second request wont modify the lastResponseBlockNr
     assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
-    easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }(callbackSelector);
+    easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }(callbackSelector);
     assertEq(subject.lastResponses(address(easyntropyConsumer)), oldBlockNumber);
   }
 
@@ -334,8 +334,8 @@ contract EasyntropyTest is Test {
   function test_responseWithCallback_callsCallback() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
-    uint256 fee = easyntropyConsumer.entropyFee();
-    uint64 requestId = easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+    uint256 fee = easyntropyConsumer.easyntropyFee();
+    uint64 requestId = easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }();
 
     __prank(executor);
     vm.expectEmit(true, true, true, true);
@@ -353,10 +353,10 @@ contract EasyntropyTest is Test {
   function test_responseWithCallback_storesBlockNumber() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
-    uint256 fee = easyntropyConsumer.entropyFee();
+    uint256 fee = easyntropyConsumer.easyntropyFee();
 
     assertEq(subject.lastResponses(address(easyntropyConsumer)), 0);
-    uint64 requestId = easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+    uint64 requestId = easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }();
     assertEq(subject.lastResponses(address(easyntropyConsumer)), block.number);
 
     vm.roll(block.number + 10);
@@ -375,8 +375,8 @@ contract EasyntropyTest is Test {
   function test_responseWithCallback_transfersReservedFundsToExecutor() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
-    uint256 fee = easyntropyConsumer.entropyFee();
-    uint64 requestId = easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+    uint256 fee = easyntropyConsumer.easyntropyFee();
+    uint64 requestId = easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }();
 
     assertEq(subject.balances(address(easyntropyConsumer)), fee);
     assertEq(subject.reservedFunds(address(easyntropyConsumer)), fee);
@@ -398,8 +398,8 @@ contract EasyntropyTest is Test {
   function test_reservedFundsWaitingPeriod_returnsRemainingBlocksWithResponseCase() public {
     EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
 
-    uint256 fee = easyntropyConsumer.entropyFee();
-    uint64 requestId = easyntropyConsumer.internal__entropyRequestWithCallback{ value: fee }();
+    uint256 fee = easyntropyConsumer.easyntropyFee();
+    uint64 requestId = easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }();
 
     vm.roll(1000);
     __prank(executor);
@@ -454,11 +454,11 @@ contract EasyntropyConsumerDummy is EasyntropyConsumer {
     emit FulfillmentSucceeded();
   }
 
-  function internal__entropyRequestWithCallback() public payable returns (uint64 requestId) {
-    requestId = entropyRequestWithCallback();
+  function internal__easyntropyRequestWithCallback() public payable returns (uint64 requestId) {
+    requestId = easyntropyRequestWithCallback();
   }
 
-  function internal__entropyRequestWithCallback(bytes4 callbackSelector) public payable returns (uint64 requestId) {
-    requestId = entropyRequestWithCallback(callbackSelector);
+  function internal__easyntropyRequestWithCallback(bytes4 callbackSelector) public payable returns (uint64 requestId) {
+    requestId = easyntropyRequestWithCallback(callbackSelector);
   }
 }

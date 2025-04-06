@@ -50,18 +50,18 @@ abstract contract EasyntropyConsumer {
 
   //
   // utils
-  function entropyFee() public view returns (uint256 fee) {
+  function easyntropyFee() public view returns (uint256 fee) {
     fee = entropy.fee();
   }
 
   //
   // request handling
-  function entropyRequestWithCallback() internal returns (uint64 requestId) {
-    requestId = entropy.requestWithCallback{ value: entropyFee() }();
+  function easyntropyRequestWithCallback() internal returns (uint64 requestId) {
+    requestId = entropy.requestWithCallback{ value: easyntropyFee() }();
   }
 
-  function entropyRequestWithCallback(bytes4 callbackSelector) internal returns (uint64 requestId) {
-    requestId = entropy.requestWithCallback{ value: entropyFee() }(callbackSelector);
+  function easyntropyRequestWithCallback(bytes4 callbackSelector) internal returns (uint64 requestId) {
+    requestId = entropy.requestWithCallback{ value: easyntropyFee() }(callbackSelector);
   }
 
   //
