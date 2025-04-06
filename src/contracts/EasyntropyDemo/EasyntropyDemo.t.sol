@@ -29,9 +29,9 @@ contract EasyntropyDemoTest is Test {
     assertEq(address(subject.entropy()), address(easyntropy));
   }
 
-  function test_entropyFee_returnsExpectedFeeFuzzy(uint256 fee) public {
+  function test_easyntropyFee_returnsExpectedFeeFuzzy(uint256 fee) public {
     easyntropy.setFee(fee);
-    assertEq(subject.entropyFee(), easyntropy.fee());
+    assertEq(subject.easyntropyFee(), easyntropy.fee());
   }
 
   function test_requestRandomValue_failsIfNotEnoughMoneyIsSent() public {
@@ -40,7 +40,7 @@ contract EasyntropyDemoTest is Test {
   }
 
   function test_requestRandomValue_emitsRandomValueRequestedEvent() public {
-    uint256 fee = subject.entropyFee();
+    uint256 fee = subject.easyntropyFee();
 
     vm.expectEmit(true, true, false, false);
     emit EasyntropyDemo.RandomValueRequested(1);
@@ -48,7 +48,7 @@ contract EasyntropyDemoTest is Test {
   }
 
   function test_requestRandomValue_addsEntryToPendingRequests() public {
-    uint256 fee = subject.entropyFee();
+    uint256 fee = subject.easyntropyFee();
 
     uint64 requestId = subject.requestRandomValue{ value: fee }();
 
@@ -57,7 +57,7 @@ contract EasyntropyDemoTest is Test {
   }
 
   function test_requestRandomValue_callsEasyntropy() public {
-    uint256 fee = subject.entropyFee();
+    uint256 fee = subject.easyntropyFee();
 
     vm.expectEmit(true, true, true, true);
     emit Easyntropy.RequestSubmitted(
@@ -74,7 +74,7 @@ contract EasyntropyDemoTest is Test {
   }
 
   function test_requestRandomValueCustomCallback_emitsRandomValueRequestedEvent() public {
-    uint256 fee = subject.entropyFee();
+    uint256 fee = subject.easyntropyFee();
 
     vm.expectEmit(true, true, false, false);
     emit EasyntropyDemo.RandomValueRequested(1);
@@ -82,7 +82,7 @@ contract EasyntropyDemoTest is Test {
   }
 
   function test_requestRandomValueCustomCallback_addsEntryToPendingRequests() public {
-    uint256 fee = subject.entropyFee();
+    uint256 fee = subject.easyntropyFee();
 
     uint64 requestId = subject.requestRandomValueCustomCallback{ value: fee }();
 
@@ -91,7 +91,7 @@ contract EasyntropyDemoTest is Test {
   }
 
   function test_requestRandomValueCustomCallback_callsEasyntropy() public {
-    uint256 fee = subject.entropyFee();
+    uint256 fee = subject.easyntropyFee();
 
     vm.expectEmit(true, true, true, true);
     emit Easyntropy.RequestSubmitted(

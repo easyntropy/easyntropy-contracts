@@ -21,9 +21,9 @@ contract EasyntropyDemo is EasyntropyConsumer {
   //
   // --- entropy usage demo: default fulfill callback -------------------------
   function requestRandomValue() public payable returns (uint64 requestId) {
-    if (msg.value < entropyFee()) revert NotEnoughEth();
+    if (msg.value < easyntropyFee()) revert NotEnoughEth();
 
-    requestId = entropyRequestWithCallback();
+    requestId = easyntropyRequestWithCallback();
 
     pendingRequests[requestId] = true;
 
@@ -40,9 +40,9 @@ contract EasyntropyDemo is EasyntropyConsumer {
   //
   // --- entropy usage demo: custom fulfill callback --------------------------
   function requestRandomValueCustomCallback() public payable returns (uint64 requestId) {
-    if (msg.value < entropyFee()) revert NotEnoughEth();
+    if (msg.value < easyntropyFee()) revert NotEnoughEth();
 
-    requestId = entropyRequestWithCallback(this.customFulfill.selector);
+    requestId = easyntropyRequestWithCallback(this.customFulfill.selector);
 
     pendingRequests[requestId] = true;
 
