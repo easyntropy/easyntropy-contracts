@@ -54,6 +54,18 @@ abstract contract EasyntropyConsumer {
     fee = entropy.fee();
   }
 
+  function currentBalanceEasyntropy() public view returns (uint256 balance) {
+    balance = entropy.balances(address(this));
+  }
+
+  function depositEasyntropy() public payable {
+    entropy.deposit{ value: msg.value }();
+  }
+
+  function withdrawEasyntropy(uint256 amount) public {
+    entropy.withdraw(amount);
+  }
+
   //
   // request handling
   function easyntropyRequestWithCallback() internal returns (uint64 requestId) {
