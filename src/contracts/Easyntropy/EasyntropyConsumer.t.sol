@@ -36,6 +36,22 @@ contract EasyntropyConsumerTest is Test {
     assertEq(subject.easyntropyFee(), easyntropy.fee());
   }
 
+  function test_currentBalanceEasyntropy_returnsContractsBalance() public {
+    assertEq(easyntropy.balances(address(subject)), 0);
+    assertEq(subject.currentBalanceEasyntropy(), 0);
+
+    subject.depositEasyntropy{ value: 1 ether }();
+
+    assertEq(easyntropy.balances(address(subject)), 1 ether);
+    assertEq(subject.currentBalanceEasyntropy(), 1 ether);
+  }
+
+  function test_depositEasyntropy_depositisFundsAtContractsBalance() public {
+    assertEq(easyntropy.balances(address(subject)), 0);
+    subject.depositEasyntropy{ value: 1 ether }();
+    assertEq(easyntropy.balances(address(subject)), 1 ether);
+  }
+
   function test_easyntropyFulfill_failsIfCalledByNotEasyntropy() public {
     vm.expectRevert(EasyntropyConsumer.PermissionDenied.selector);
     subject._easyntropyFulfill(
