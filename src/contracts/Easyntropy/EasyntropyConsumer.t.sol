@@ -36,33 +36,33 @@ contract EasyntropyConsumerTest is Test {
     assertEq(subject.easyntropyFee(), easyntropy.fee());
   }
 
-  function test_currentBalanceEasyntropy_returnsContractsBalance() public {
+  function test_easyntropyCurrentBalance_returnsContractsBalance() public {
     assertEq(easyntropy.balances(address(subject)), 0);
-    assertEq(subject.currentBalanceEasyntropy(), 0);
+    assertEq(subject.easyntropyCurrentBalance(), 0);
 
-    subject.depositEasyntropy{ value: 1 ether }();
+    subject.easyntropyDeposit{ value: 1 ether }();
 
     assertEq(easyntropy.balances(address(subject)), 1 ether);
-    assertEq(subject.currentBalanceEasyntropy(), 1 ether);
+    assertEq(subject.easyntropyCurrentBalance(), 1 ether);
   }
 
-  function test_depositEasyntropy_depositsFundsAtContractsBalance() public {
+  function test_easyntropyDeposit_depositsFundsAtContractsBalance() public {
     assertEq(easyntropy.balances(address(subject)), 0);
-    subject.depositEasyntropy{ value: 1 ether }();
+    subject.easyntropyDeposit{ value: 1 ether }();
     assertEq(easyntropy.balances(address(subject)), 1 ether);
   }
 
-  function test_withdrawEasyntropy_withdrawsFundsBackToContracts() public {
+  function test_easyntropyWithdraw_withdrawsFundsBackToContracts() public {
     EasyntropyConsumerDummy wrappedSubject = new EasyntropyConsumerDummy(address(easyntropy));
-    wrappedSubject.depositEasyntropy{ value: 1 ether }();
+    wrappedSubject.easyntropyDeposit{ value: 1 ether }();
 
     // 1st withdraw
-    wrappedSubject.internal__withdrawEasyntropy(0.3 ether);
+    wrappedSubject.internal__easyntropyWithdraw(0.3 ether);
     assertEq(address(wrappedSubject).balance, 0.3 ether);
     assertEq(easyntropy.balances(address(wrappedSubject)), 0.7 ether);
 
     // 2nd withdraw
-    wrappedSubject.internal__withdrawEasyntropy(0.5 ether);
+    wrappedSubject.internal__easyntropyWithdraw(0.5 ether);
     assertEq(address(wrappedSubject).balance, 0.8 ether);
     assertEq(easyntropy.balances(address(wrappedSubject)), 0.2 ether);
   }
@@ -221,8 +221,8 @@ contract EasyntropyConsumerDummy is EasyntropyConsumer {
     emit CustomFulfillmentSucceeded();
   }
 
-  function internal__withdrawEasyntropy(uint256 amount) public {
-    withdrawEasyntropy(amount);
+  function internal__easyntropyWithdraw(uint256 amount) public {
+    easyntropyWithdraw(amount);
   }
 
   function internal__easyntropyRequestWithCallback() public returns (uint64 requestId) {
