@@ -62,7 +62,7 @@ abstract contract EasyntropyConsumer {
     entropy.deposit{ value: msg.value }();
   }
 
-  function withdrawEasyntropy(uint256 amount) public {
+  function withdrawEasyntropy(uint256 amount) internal {
     entropy.withdraw(amount);
   }
 
