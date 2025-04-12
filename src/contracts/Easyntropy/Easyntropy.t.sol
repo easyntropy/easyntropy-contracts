@@ -211,7 +211,9 @@ contract EasyntropyTest is Test {
   }
 
   function test_requestWithCallback_setLastResponseBlockNrForInitialRequest() public {
-    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+    EasyntropyConsumerWrapperExposingInternalMethods easyntropyConsumer = new EasyntropyConsumerWrapperExposingInternalMethods(
+      address(subject)
+    );
 
     uint256 fee = easyntropyConsumer.easyntropyFee();
 
@@ -293,7 +295,9 @@ contract EasyntropyTest is Test {
   }
 
   function test_requestWithCallbackCustomCallback_setLastResponseBlockNrForInitialRequest() public {
-    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+    EasyntropyConsumerWrapperExposingInternalMethods easyntropyConsumer = new EasyntropyConsumerWrapperExposingInternalMethods(
+      address(subject)
+    );
 
     uint256 fee = easyntropyConsumer.easyntropyFee();
     bytes4 callbackSelector = bytes4(keccak256("customFulfill(uint64,bytes32)"));
@@ -332,14 +336,16 @@ contract EasyntropyTest is Test {
   }
 
   function test_responseWithCallback_callsCallback() public {
-    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+    EasyntropyConsumerWrapperExposingInternalMethods easyntropyConsumer = new EasyntropyConsumerWrapperExposingInternalMethods(
+      address(subject)
+    );
 
     uint256 fee = easyntropyConsumer.easyntropyFee();
     uint64 requestId = easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }();
 
     __prank(executor);
     vm.expectEmit(true, true, true, true);
-    emit EasyntropyConsumerDummy.FulfillmentSucceeded();
+    emit EasyntropyConsumerWrapperExposingInternalMethods.FulfillmentSucceeded();
 
     subject.responseWithCallback(
       requestId,
@@ -351,7 +357,9 @@ contract EasyntropyTest is Test {
   }
 
   function test_responseWithCallback_storesBlockNumber() public {
-    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+    EasyntropyConsumerWrapperExposingInternalMethods easyntropyConsumer = new EasyntropyConsumerWrapperExposingInternalMethods(
+      address(subject)
+    );
 
     uint256 fee = easyntropyConsumer.easyntropyFee();
 
@@ -373,7 +381,9 @@ contract EasyntropyTest is Test {
   }
 
   function test_responseWithCallback_transfersReservedFundsToExecutor() public {
-    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+    EasyntropyConsumerWrapperExposingInternalMethods easyntropyConsumer = new EasyntropyConsumerWrapperExposingInternalMethods(
+      address(subject)
+    );
 
     uint256 fee = easyntropyConsumer.easyntropyFee();
     uint64 requestId = easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }();
@@ -396,7 +406,9 @@ contract EasyntropyTest is Test {
   }
 
   function test_reservedFundsWaitingPeriod_returnsRemainingBlocksWithResponseCase() public {
-    EasyntropyConsumerDummy easyntropyConsumer = new EasyntropyConsumerDummy(address(subject));
+    EasyntropyConsumerWrapperExposingInternalMethods easyntropyConsumer = new EasyntropyConsumerWrapperExposingInternalMethods(
+      address(subject)
+    );
 
     uint256 fee = easyntropyConsumer.easyntropyFee();
     uint64 requestId = easyntropyConsumer.internal__easyntropyRequestWithCallback{ value: fee }();
@@ -446,7 +458,7 @@ contract EasyntropyTest is Test {
   }
 }
 
-contract EasyntropyConsumerDummy is EasyntropyConsumer {
+contract EasyntropyConsumerWrapperExposingInternalMethods is EasyntropyConsumer {
   event FulfillmentSucceeded();
 
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
