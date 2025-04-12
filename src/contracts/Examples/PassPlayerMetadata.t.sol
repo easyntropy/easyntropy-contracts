@@ -40,9 +40,7 @@ contract PassPlayerMetadataTest is Test {
   }
 
   function test_startTrainingGladiator_addsEntryToPendingRequests() public {
-    uint256 fee = subject.easyntropyFee();
-
-    uint64 requestId = subject.startTrainingGladiator{ value: fee }(1);
+    uint64 requestId = subject.startTrainingGladiator{ value: subject.easyntropyFee() }(1);
 
     uint64 gladiatorId = subject.pendingRequests(requestId);
     uint8 gladiatorStrength = subject.gladiators(gladiatorId);
@@ -50,30 +48,26 @@ contract PassPlayerMetadataTest is Test {
   }
 
   function test_startTrainingGladiator_callsEasyntropy() public {
-    uint256 fee = subject.easyntropyFee();
-
     vm.expectEmit(true, true, true, true);
     emit Easyntropy.RequestSubmitted(
       1, // requestId
       address(subject), // sender
       bytes4(keccak256("trainGladiator(uint64,bytes32)")) // callbackSelector
     );
-    subject.startTrainingGladiator{ value: fee }(1);
+    subject.startTrainingGladiator{ value: subject.easyntropyFee() }(1);
   }
 
   function test_easyntropyFullfill_failsWhenCalledByNonOracle() public {
-    uint64 requestId = 1;
     vm.expectRevert(); // revert due to permissions, only executor can call this function
     subject.trainGladiator(
-      requestId,
+      1, // requestId
       bytes32(uint256(2)) // externalSeed
     );
   }
 
   function test_trainGladiator() public {
     uint64 gladiatorId = 1;
-    uint256 fee = subject.easyntropyFee();
-    uint64 requestId = subject.startTrainingGladiator{ value: fee }(gladiatorId);
+    uint64 requestId = subject.startTrainingGladiator{ value: subject.easyntropyFee() }(gladiatorId);
 
     vm.startPrank(executor);
     easyntropy.responseWithCallback(

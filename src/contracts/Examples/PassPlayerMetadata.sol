@@ -5,6 +5,8 @@ pragma solidity ^0.8.20;
 import "../Easyntropy/EasyntropyConsumer.sol";
 
 contract PassPlayerMetadata is EasyntropyConsumer {
+  //
+  // support
   struct Gladiator {
     uint8 strength;
   }

@@ -17,8 +17,6 @@ contract StoreLastSeedCustomCallback is EasyntropyConsumer {
 
   constructor(address _entropy) EasyntropyConsumer(_entropy) {}
 
-  //
-  // --- entropy usage demo: custom fulfill callback --------------------------
   function requestRandomValueCustomCallback() public payable returns (uint64 requestId) {
     if (msg.value < easyntropyFee()) revert NotEnoughEth();
 

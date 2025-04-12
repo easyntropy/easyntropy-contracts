@@ -18,7 +18,7 @@ contract Prepaying is EasyntropyConsumer {
     requestId = entropy.requestWithCallback();
   }
 
-  function easyntropyFulfill(uint64 requestId, bytes32 seed) external onlyEasyntropy {
+  function easyntropyFulfill(uint64, bytes32 seed) external onlyEasyntropy {
     latestSeed = seed;
   }
 

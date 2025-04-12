@@ -40,34 +40,28 @@ contract StoreLastSeedCustomCallbackTest is Test {
   }
 
   function test_requestRandomValueCustomCallback_emitsRandomValueRequestedEvent() public {
-    uint256 fee = subject.easyntropyFee();
-
     vm.expectEmit(true, true, false, false);
     emit StoreLastSeedCustomCallback.RandomValueRequested(1);
-    subject.requestRandomValueCustomCallback{ value: fee }();
+    subject.requestRandomValueCustomCallback{ value: subject.easyntropyFee() }();
   }
 
   function test_requestRandomValueCustomCallback_callsEasyntropy() public {
-    uint256 fee = subject.easyntropyFee();
-
     vm.expectEmit(true, true, true, true);
     emit Easyntropy.RequestSubmitted(
       1, // requestId
       address(subject), // sender
       bytes4(keccak256("customFulfill(uint64,bytes32)")) // callbackSelector
     );
-    subject.requestRandomValueCustomCallback{ value: fee }();
+    subject.requestRandomValueCustomCallback{ value: subject.easyntropyFee() }();
   }
 
   function test_easyntropyFullfill_emitsRandomValueObtainedEvent() public {
-    uint256 fee = subject.easyntropyFee();
-    uint64 requestId = subject.requestRandomValueCustomCallback{ value: fee }();
+    uint64 requestId = subject.requestRandomValueCustomCallback{ value: subject.easyntropyFee() }();
 
     vm.startPrank(executor);
 
     vm.expectEmit(true, true, false, false);
     emit StoreLastSeedCustomCallback.RandomValueObtained(requestId, bytes32(uint256(2)));
-
     easyntropy.responseWithCallback(
       requestId,
       address(subject), // requester
@@ -78,17 +72,17 @@ contract StoreLastSeedCustomCallbackTest is Test {
   }
 
   function test_easyntropyFullfill_assignLastSeed() public {
-    uint256 fee = subject.easyntropyFee();
-    uint64 requestId = subject.requestRandomValueCustomCallback{ value: fee }();
+    uint64 requestId = subject.requestRandomValueCustomCallback{ value: subject.easyntropyFee() }();
 
     vm.startPrank(executor);
+    bytes32 fakeSeed = bytes32(uint256(2));
     easyntropy.responseWithCallback(
       requestId,
       address(subject), // requester
       bytes4(keccak256("customFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
+      fakeSeed, // externalSeed
       3 // externalSeedId
     );
-    assertEq(subject.latestSeed(), bytes32(uint256(2)));
+    assertEq(subject.latestSeed(), fakeSeed);
   }
 }

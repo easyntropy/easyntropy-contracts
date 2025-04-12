@@ -47,13 +47,14 @@ contract PrepayingTest is Test {
     uint64 requestId = subject.requestRandomValueWithoutPaying();
 
     vm.startPrank(executor);
+    bytes32 fakeSeed = bytes32(uint256(2));
     easyntropy.responseWithCallback(
       requestId,
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
+      fakeSeed, // externalSeed
       3 // externalSeedId
     );
-    assertEq(subject.latestSeed(), bytes32(uint256(2)));
+    assertEq(subject.latestSeed(), fakeSeed);
   }
 }
