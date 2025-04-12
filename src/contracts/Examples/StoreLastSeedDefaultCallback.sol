@@ -35,5 +35,4 @@ contract StoreLastSeedDefaultCallback is EasyntropyConsumer {
   function calculateSeed(bytes32 externalSeed) internal pure override returns (bytes32 result) {
     result = externalSeed;
   }
-  // ----------------------------------------------------------------------------
 }
