@@ -21,6 +21,9 @@ contract Easyntropy is IEasyntropy {
   event RequestSubmitted(uint64 indexed requestId, address indexed requester, bytes4 callbackSelector);
   event DepositReceived(address indexed account, uint256 indexed value);
   event FundsWithdrawn(address indexed account, uint256 indexed value);
+  event ExecutorAdded(address indexed account);
+  event ExecutorRemoved(address indexed account);
+  event FeeSet(uint256 indexed value);
   error PermissionDenied();
   error NotEnoughEth();
 
@@ -93,14 +96,17 @@ contract Easyntropy is IEasyntropy {
   // contract managment
   function addExecutor(address executor) public onlyOwner {
     executors[executor] = true;
+    emit ExecutorAdded(executor);
   }
 
   function removeExecutor(address executor) public onlyOwner {
     delete executors[executor];
+    emit ExecutorRemoved(executor);
   }
 
   function setFee(uint256 _fee) public onlyOwner {
     fee = _fee;
+    emit FeeSet(_fee);
   }
 
   //
