@@ -8,22 +8,17 @@ Installation:
 git submodule update --init --recursive
 ```
 
-Dev env:
+Run local anvil:
 
 ```bash
-./scripts/run-dev-env-docker.sh
+./scripts/run-dev-env-docker.sh support
 ```
 
 Tests:
 
 ```bash
-./scripts/shell-docker.sh forge test --summary --detailed -vvv
-./scripts/linters-check-docker.sh
+  ./scripts/run-dev-env-docker.sh shell yarn
+  ./scripts/run-dev-env-docker.sh shell yarn run lint
+
+  ./scripts/run-dev-env-docker.sh shell forge test --summary --detailed -vvv
 ```
-
-#### Remix IDE
-
-Remix IDE is available at `http://localhost:8001` with access to anvil chain and local files.
-
-- Click "Connect to Localhost" to have access to local files.
-- Use Environment: "Web3 Provider" - http://127.0.0.1:8545 (default) to use local anvil chain

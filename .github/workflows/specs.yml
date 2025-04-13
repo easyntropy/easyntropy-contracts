@@ -18,8 +18,9 @@ jobs:
 
       - name: Run linters
         run: |
-          ./scripts/linters-check-docker.sh
+          ./scripts/run-dev-env-docker.sh shell yarn
+          ./scripts/run-dev-env-docker.sh shell yarn run lint
 
       - name: Run specs
         run: |
-          ./scripts/shell-docker.sh forge test --summary --detailed -vvv
+          ./scripts/run-dev-env-docker.sh shell forge test --summary --detailed -vvv
