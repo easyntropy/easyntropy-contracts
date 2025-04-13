@@ -1,40 +1,14 @@
 services:
-  remixd:
+  shell:
     build:
       context: .
       dockerfile_inline: |
         FROM node:20-slim
-        WORKDIR /usr/app
+        WORKDIR /usr/app/
         RUN apt-get update \
-         && apt-get install -y bash
-
-        # Install remixd (sharing files from host to remix editor)
-        RUN npm install -g @remix-project/remixd \
-         && sed -i s/127.0.0.1/0.0.0.0/g /usr/local/lib/node_modules/@remix-project/remixd/src/websocket.js
-
-    entrypoint: /bin/bash -lc
-    ports:
-      - "65520:65520"
-      - "65523:65523"
-      - "65525:65525"
-    volumes:
-      - ../../src/:/usr/app/src
-    command: |
-      'remixd -s /usr/app/src --remix-ide http://localhost:8001/'
-
-  remix:
-    image: remixproject/remix-ide:remix_live
-    ports:
-      - "8001:80"
-
-  anvil:
-    build:
-      context: .
-      dockerfile_inline: |
-        FROM debian:bookworm-slim
-        WORKDIR /usr/app
-        RUN apt-get update \
-         && apt-get install -y curl git
+         && apt-get install -y curl git bash \
+         && apt-get clean \
+         && git config --global --add safe.directory /usr/app
 
         # Install foundry
         RUN curl -L https://foundry.paradigm.xyz | bash \
@@ -42,34 +16,35 @@ services:
          && foundryup
 
     entrypoint: /bin/bash -lc
+
+    environment:
+      CI: ${CI}
+      ETH_RPC_URL: "http://anvil:8545"
+
+    volumes:
+      - ../../:/usr/app
+      - easyntropy-contracts-node-modules:/usr/app/node_modules
+
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:stable
     ports:
       - "8545:8545"
     volumes:
       - ../../:/usr/app
-    command: |
-      '
-      echo -e "\n!!\n!! Anvil state will be saved/loaded from .tmp/anvil/state.json\n!!\n" ; \
-      anvil -p 8545 --host "0.0.0.0" --allow-origin "*" --mnemonic "test test test test test test test test test test test junk" $([ -f "/usr/app/.tmp/anvil/state.json" ] && echo "--load-state /usr/app/.tmp/anvil/state.json") --dump-state /usr/app/.tmp/anvil/state.json
-      '
+    entrypoint:
+      - "anvil"
+      - "--chain-id"
+      - "1337"
+      - "--port"
+      - "8545"
+      - "--host"
+      - "0.0.0.0"
+      - "--allow-origin"
+      - "*"
+      # - "--load-state"
+      # - "/usr/app/eth/anvil/state.json"
+      # - '--dump-state'
+      # - '/usr/app/eth/anvil/state.json'
 
-  shell:
-    profiles: ["utils"]
-    build:
-      context: .
-      dockerfile_inline: |
-        FROM node:20-slim
-        WORKDIR /usr/app
-        RUN apt-get update \
-         && apt-get install -y curl git
-
-        # Install foundry
-        RUN curl -L https://foundry.paradigm.xyz | bash \
-         && export PATH="$PATH:/root/.foundry/bin" \
-         && foundryup
-
-    entrypoint: /bin/bash -lc
-    volumes:
-      - dev-env-node-modules:/usr/app/node_modules
-      - ../../:/usr/app
-    environment:
-      ETH_RPC_URL: http://host.docker.internal:8545
+volumes:
+  easyntropy-contracts-node-modules:
