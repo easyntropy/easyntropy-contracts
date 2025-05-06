@@ -6,7 +6,7 @@ services:
         FROM node:20-slim
         WORKDIR /usr/app/
         RUN apt-get update \
-         && apt-get install -y curl git bash \
+         && apt-get install -y curl git bash jq \
          && apt-get clean \
          && git config --global --add safe.directory /usr/app
 
