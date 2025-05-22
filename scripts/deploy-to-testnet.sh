@@ -5,7 +5,7 @@ ETHERSCAN_API_KEY="..."
 
 RPC_URL=https://sepolia.drpc.org
 EXECUTOR_ADDRESS=0x7024f2a7d9580098dD06A8675E912f6CBcC4fB0A
-FEE_AMOUNT=100000000000000 # 0.0001 ETH
+FEE_AMOUNT=$(cast to-wei 0.00001 ether)
 
 forge create \
   ./src/contracts/Easyntropy/Easyntropy.sol:Easyntropy \
