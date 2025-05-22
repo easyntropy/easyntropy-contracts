@@ -3,9 +3,9 @@
 PRIVATE_KEY="..."
 ETHERSCAN_API_KEY="..."
 
-RPC_URL=https://sepolia.drpc.org
-EXECUTOR_ADDRESS=0x7024f2a7d9580098dD06A8675E912f6CBcC4fB0A
-FEE_AMOUNT=$(cast to-wei 0.00001 ether)
+RPC_URL=https://ethereum.publicnode.com/
+EXECUTOR_ADDRESS=0x147ca77892290B5103fE10299A6DEe74321c1447
+FEE_AMOUNT=$(cast to-wei 0.0002 ether)
 
 forge create \
   ./src/contracts/Easyntropy/Easyntropy.sol:Easyntropy \
