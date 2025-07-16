@@ -57,8 +57,7 @@
       "double"
     ],
     "const-name-snakecase": "error",
-    "contract-name-camelcase": "error",
-    "event-name-camelcase": "error",
+    "contract-name-capwords": "error",
     "foundry-test-functions": [
       "off",
       [
@@ -75,6 +74,7 @@
       }
     ],
     "imports-order": "off",
+    "import-path-check": "off",
     "modifier-name-mixedcase": "error",
     "named-parameters-mapping": "error",
     "private-vars-leading-underscore": "off",
@@ -106,7 +106,6 @@
     "not-rely-on-block-hash": "error",
     "not-rely-on-time": "off",
     "reentrancy": "error",
-    "state-visibility": "error",
-    "prettier/prettier": "error"
+    "state-visibility": "error"
   }
 }
