@@ -2,5 +2,10 @@
   "editor.formatOnSave": true,
   "[solidity]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "solidity.packageDefaultDependenciesContractsDirectory": "src/contracts",
+  "solidity.packageDefaultDependenciesDirectory": "src/libs",
+  "solidity.remappings": [
+    "forge-std/=src/libs/forge-std/src/"
+  ]
 }
