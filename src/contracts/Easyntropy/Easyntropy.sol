@@ -3,7 +3,7 @@
 pragma solidity ^0.8.20;
 
 import "./IEasyntropy.sol";
-import "./EasyntropyConsumer.sol";
+import "./IEasyntropyConsumer.sol";
 
 contract Easyntropy is IEasyntropy {
   uint256 public constant RELEASE_FUNDS_AFTER_BLOCKS = 50000; // ~1 week
@@ -89,7 +89,7 @@ contract Easyntropy is IEasyntropy {
 
     payable(msg.sender).transfer(requestFee);
 
-    EasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed, externalSeedId);
+    IEasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed, externalSeedId);
   }
 
   //
