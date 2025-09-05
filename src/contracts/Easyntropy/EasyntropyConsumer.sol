@@ -3,8 +3,9 @@
 pragma solidity ^0.8.20;
 
 import "./IEasyntropy.sol";
+import "./IEasyntropyConsumer.sol";
 
-abstract contract EasyntropyConsumer {
+abstract contract EasyntropyConsumer is IEasyntropyConsumer {
   IEasyntropy public entropy;
 
   event FulfillmentSucceeded(
