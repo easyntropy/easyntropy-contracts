@@ -87,7 +87,7 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // requestId
       address(subject), // requester
-      0x493411d13d63214b2404144a3bc1c0b96adbfb5b75b02b8d07720ea9a77142fd, // seed (based on externalSeed and internalSeed)
+      0xdd7ed06fc684f2c66dfadb7b1ba4b50a120f0d4ba95bdc6989e8e3d2bde39bfd, // seed (based on externalSeed, blockhash, tx.gasprice)
       bytes32(uint256(2)), // externalSeed
       3 // externalSeedId
     );
@@ -108,7 +108,7 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentFailed(
       1, // requestId
       address(subject), // requester
-      0x493411d13d63214b2404144a3bc1c0b96adbfb5b75b02b8d07720ea9a77142fd, // seed (based on externalSeed and internalSeed)
+      0xdd7ed06fc684f2c66dfadb7b1ba4b50a120f0d4ba95bdc6989e8e3d2bde39bfd, // seed (based on externalSeed, blockhash, tx.gasprice)
       bytes32(uint256(2)), // externalSeed
       3 // externalSeedId
     );
@@ -132,7 +132,7 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // requestId
       address(subject), // requester
-      0x493411d13d63214b2404144a3bc1c0b96adbfb5b75b02b8d07720ea9a77142fd, // seed (based on externalSeed and internalSeed)
+      0xdd7ed06fc684f2c66dfadb7b1ba4b50a120f0d4ba95bdc6989e8e3d2bde39bfd, // seed (based on externalSeed, blockhash, tx.gasprice)
       bytes32(uint256(2)), // externalSeed
       3 // externalSeedId
     );
