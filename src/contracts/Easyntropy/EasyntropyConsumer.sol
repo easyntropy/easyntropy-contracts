@@ -46,7 +46,7 @@ abstract contract EasyntropyConsumer is IEasyntropyConsumer {
   // is called to compute the final seed. If there are project-specific variables (for example, a
   // player ID), feel free to override this method to incorporate them.
   function calculateSeed(bytes32 externalSeed) internal view virtual returns (bytes32 result) {
-    result = keccak256(abi.encodePacked(externalSeed, block.number, tx.gasprice));
+    result = keccak256(abi.encodePacked(externalSeed, blockhash(block.number - 1), tx.gasprice));
   }
 
   //
