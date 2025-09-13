@@ -1,1 +1,2 @@
 forge-std/=src/libs/forge-std/src/
+pyth/=src/libs/pyth-crosschain/target_chains/ethereum/entropy_sdk/solidity
