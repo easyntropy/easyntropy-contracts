@@ -25,8 +25,8 @@ contract PassPlayerMetadataTest is Test {
     subject = new PassPlayerMetadata(address(easyntropy));
   }
 
-  function test_constructor_setsEntropyAddresses() public view {
-    assertEq(address(subject.entropy()), address(easyntropy));
+  function test_constructor_setsEasyntropyAddresses() public view {
+    assertEq(address(subject.easyntropy()), address(easyntropy));
   }
 
   function test_easyntropyFee_returnsExpectedFeeFuzzy(uint256 fee) public {

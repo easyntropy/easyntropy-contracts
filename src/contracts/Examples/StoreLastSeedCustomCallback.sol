@@ -15,7 +15,7 @@ contract StoreLastSeedCustomCallback is EasyntropyConsumer {
   event RandomValueObtained(uint64 indexed requestId, bytes32 seed);
   error NotEnoughEth();
 
-  constructor(address _entropy) EasyntropyConsumer(_entropy) {}
+  constructor(address _easyntropy) EasyntropyConsumer(_easyntropy) {}
 
   function requestRandomValueCustomCallback() public payable returns (uint64 requestId) {
     if (msg.value < easyntropyFee()) revert NotEnoughEth();
