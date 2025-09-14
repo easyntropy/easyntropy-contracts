@@ -23,7 +23,7 @@ contract PassPlayerMetadata is EasyntropyConsumer {
   // events & errors
   error NotEnoughEth();
 
-  constructor(address _entropy) EasyntropyConsumer(_entropy) {
+  constructor(address _easyntropy) EasyntropyConsumer(_easyntropy) {
     gladiators[0] = Gladiator({ strength: 1 });
     gladiators[1] = Gladiator({ strength: 1 });
   }

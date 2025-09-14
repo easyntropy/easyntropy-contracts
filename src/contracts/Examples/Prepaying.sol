@@ -9,13 +9,13 @@ contract Prepaying is EasyntropyConsumer {
   // support
   bytes32 public latestSeed;
 
-  constructor(address _entropy) EasyntropyConsumer(_entropy) {}
+  constructor(address _easyntropy) EasyntropyConsumer(_easyntropy) {}
 
   function requestRandomValueWithoutPaying() public returns (uint64 requestId) {
     //
-    // calling entropy.requestWithCallback directly without any fee.
+    // calling easyntropy.requestWithCallback directly without any fee.
     // this is only possible if easyntropyDeposit{ value: ... }() has been called earlier.
-    requestId = entropy.requestWithCallback();
+    requestId = easyntropy.requestWithCallback();
   }
 
   function easyntropyFulfill(uint64, bytes32 seed) external onlyEasyntropy {

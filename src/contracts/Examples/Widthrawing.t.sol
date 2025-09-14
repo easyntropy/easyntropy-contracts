@@ -25,8 +25,8 @@ contract WidthrawingTest is Test {
     subject = new Widthrawing(address(easyntropy));
   }
 
-  function test_constructor_setsEntropyAddresses() public view {
-    assertEq(address(subject.entropy()), address(easyntropy));
+  function test_constructor_setsEasyntropyAddresses() public view {
+    assertEq(address(subject.easyntropy()), address(easyntropy));
   }
 
   function test_withdrawFromOracle() public {
