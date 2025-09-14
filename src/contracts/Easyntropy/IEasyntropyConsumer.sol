@@ -5,7 +5,7 @@ pragma solidity ^0.8.20;
 import "./IEasyntropy.sol";
 
 interface IEasyntropyConsumer {
-  function entropy() external view returns (IEasyntropy entropy);
+  function easyntropy() external view returns (IEasyntropy entropy);
   function easyntropyFee() external view returns (uint256 fee);
   function easyntropyCurrentBalance() external view returns (uint256 balance);
   function easyntropyDeposit() external payable;

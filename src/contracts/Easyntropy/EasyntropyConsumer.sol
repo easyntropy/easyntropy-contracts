@@ -6,7 +6,7 @@ import "./IEasyntropy.sol";
 import "./IEasyntropyConsumer.sol";
 
 abstract contract EasyntropyConsumer is IEasyntropyConsumer {
-  IEasyntropy public entropy;
+  IEasyntropy public easyntropy;
 
   event FulfillmentSucceeded(
     uint64 indexed requestId,
@@ -30,12 +30,12 @@ abstract contract EasyntropyConsumer is IEasyntropyConsumer {
   }
 
   modifier _onlyEasyntropyOracle() {
-    if (msg.sender != address(entropy)) revert PermissionDenied();
+    if (msg.sender != address(easyntropy)) revert PermissionDenied();
     _;
   }
 
-  constructor(address _entropy) {
-    entropy = IEasyntropy(_entropy);
+  constructor(address eEasyntropy) {
+    easyntropy = IEasyntropy(eEasyntropy);
   }
 
   //
@@ -52,29 +52,29 @@ abstract contract EasyntropyConsumer is IEasyntropyConsumer {
   //
   // utils
   function easyntropyFee() public view returns (uint256 fee) {
-    fee = entropy.fee();
+    fee = easyntropy.fee();
   }
 
   function easyntropyCurrentBalance() public view returns (uint256 balance) {
-    balance = entropy.balances(address(this));
+    balance = easyntropy.balances(address(this));
   }
 
   function easyntropyDeposit() public payable {
-    entropy.deposit{ value: msg.value }();
+    easyntropy.deposit{ value: msg.value }();
   }
 
   function easyntropyWithdraw(uint256 amount) internal {
-    entropy.withdraw(amount);
+    easyntropy.withdraw(amount);
   }
 
   //
   // request handling
   function easyntropyRequestWithCallback() internal returns (uint64 requestId) {
-    requestId = entropy.requestWithCallback{ value: easyntropyFee() }();
+    requestId = easyntropy.requestWithCallback{ value: easyntropyFee() }();
   }
 
   function easyntropyRequestWithCallback(bytes4 callbackSelector) internal returns (uint64 requestId) {
-    requestId = entropy.requestWithCallback{ value: easyntropyFee() }(callbackSelector);
+    requestId = easyntropy.requestWithCallback{ value: easyntropyFee() }(callbackSelector);
   }
 
   //

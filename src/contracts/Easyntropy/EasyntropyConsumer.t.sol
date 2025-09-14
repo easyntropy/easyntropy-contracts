@@ -29,7 +29,7 @@ contract EasyntropyConsumerTest is Test {
   }
 
   function test_constructor_setsEntropyAddresses() public view {
-    assertEq(address(subject.entropy()), address(easyntropy));
+    assertEq(address(subject.easyntropy()), address(easyntropy));
   }
 
   function test_easyntropyFee_returnsFee() public view {
