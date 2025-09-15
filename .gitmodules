@@ -1,3 +1,6 @@
 [submodule "src/libs/forge-std"]
 	path = src/libs/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "src/libs/pyth-crosschain"]
+	path = src/libs/pyth-crosschain
+	url = https://github.com/pyth-network/pyth-crosschain

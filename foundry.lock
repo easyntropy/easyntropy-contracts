@@ -1,0 +1,11 @@
+{
+  "src/libs/forge-std": {
+    "rev": "1eea5bae12ae557d589f9f0f0edae2faa47cb262"
+  },
+  "src/libs/pyth-crosschain": {
+    "branch": {
+      "name": "main",
+      "rev": "de8118a44e7d3041bb92b0fa1147939cad3ce3eb"
+    }
+  }
+}
