@@ -35,7 +35,7 @@ contract PythNetworkV2ToEasyntropyAdapter is IEntropyV2, IEntropy, EasyntropyCon
   function easyntropyFulfill(uint64 requestId, bytes32 seed) external onlyEasyntropy {
     address requester = requesters[requestId];
     delete requesters[requestId];
-    IEntropyConsumer(requester)._entropyCallback(requestId, address(easyntropy), seed);
+    IEntropyConsumer(requester)._entropyCallback(requestId, address(this), seed);
   }
 
   //
@@ -99,14 +99,14 @@ contract PythNetworkV2ToEasyntropyAdapter is IEntropyV2, IEntropy, EasyntropyCon
   function requestV2(
     uint32 // gasLimit
   ) external payable returns (uint64 assignedSequenceNumber) {
-    assignedSequenceNumber = this.requestV2();
+    assignedSequenceNumber = this.requestV2{ value: msg.value }();
   }
 
   function requestV2(
     address, // provider
     uint32 // gasLimit
   ) external payable returns (uint64 assignedSequenceNumber) {
-    assignedSequenceNumber = this.requestV2();
+    assignedSequenceNumber = this.requestV2{ value: msg.value }();
   }
 
   function requestV2(
@@ -114,7 +114,7 @@ contract PythNetworkV2ToEasyntropyAdapter is IEntropyV2, IEntropy, EasyntropyCon
     bytes32, // userRandomNumber
     uint32 // gasLimit
   ) external payable returns (uint64 assignedSequenceNumber) {
-    assignedSequenceNumber = this.requestV2();
+    assignedSequenceNumber = this.requestV2{ value: msg.value }();
   }
 
   function getFeeV2(
