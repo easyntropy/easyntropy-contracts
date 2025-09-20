@@ -116,7 +116,7 @@ contract Easyntropy is IEasyntropy {
   }
 
   //
-  // users money managment
+  // users money management
   function reservedFundsWaitingPeriod(address addr) public view returns (uint256 result) {
     uint256 releaseBlock = lastResponses[addr] + RELEASE_FUNDS_AFTER_BLOCKS;
     return block.number > releaseBlock ? 0 : (releaseBlock - block.number);
