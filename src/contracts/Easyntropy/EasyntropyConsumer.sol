@@ -34,8 +34,8 @@ abstract contract EasyntropyConsumer is IEasyntropyConsumer {
     _;
   }
 
-  constructor(address eEasyntropy) {
-    easyntropy = IEasyntropy(eEasyntropy);
+  constructor(address _easyntropy) {
+    easyntropy = IEasyntropy(_easyntropy);
   }
 
   //
