@@ -21,6 +21,7 @@ contract Easyntropy is IEasyntropy {
   event RequestSubmitted(uint64 indexed requestId, address indexed requester, bytes4 callbackSelector);
   event DepositReceived(address indexed account, uint256 indexed value);
   event FundsWithdrawn(address indexed account, uint256 indexed value);
+  event OwnerChanged(address indexed account);
   event ExecutorAdded(address indexed account);
   event ExecutorRemoved(address indexed account);
   event FeeSet(uint256 indexed value);
@@ -94,6 +95,11 @@ contract Easyntropy is IEasyntropy {
 
   //
   // contract managment
+  function changeOwner(address newOwner) public onlyOwner {
+    owner = newOwner;
+    emit OwnerChanged(newOwner);
+  }
+
   function addExecutor(address executor) public onlyOwner {
     executors[executor] = true;
     emit ExecutorAdded(executor);
