@@ -94,7 +94,7 @@ contract Easyntropy is IEasyntropy {
   }
 
   //
-  // contract managment
+  // contract management
   function changeOwner(address newOwner) public onlyOwner {
     owner = newOwner;
     emit OwnerChanged(newOwner);
