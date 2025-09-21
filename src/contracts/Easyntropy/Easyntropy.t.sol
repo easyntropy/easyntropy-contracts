@@ -57,28 +57,28 @@ contract EasyntropyTest is Test {
     subject.setFee(10 wei);
   }
 
-  function test_changeOwner_changesOwner() public {
+  function test_setOwner_changesOwner() public {
     __prank(owner);
 
     address newOwner = makeAddr("newOwner");
-    subject.changeOwner(newOwner);
+    subject.setOwner(newOwner);
     assertEq(subject.owner(), newOwner);
   }
 
-  function test_changeOwner_emitsOwnerChangedEvent() public {
+  function test_setOwner_emitsOwnerChangedEvent() public {
     __prank(owner);
     address newOwner = makeAddr("newOwner");
 
     vm.expectEmit(true, true, true, true);
-    emit Easyntropy.OwnerChanged(newOwner);
-    subject.changeOwner(newOwner);
+    emit Easyntropy.OwnerSet(newOwner);
+    subject.setOwner(newOwner);
   }
 
-  function test_changeOwner_failsWhenExecutedByNotOwner() public {
+  function test_setOwner_failsWhenExecutedByNotOwner() public {
     address newOwner = makeAddr("newOwner");
 
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
-    subject.changeOwner(newOwner);
+    subject.setOwner(newOwner);
   }
 
   function test_addExecutor_addsExecutor() public {
