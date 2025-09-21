@@ -50,6 +50,30 @@ contract PythNetworkToEasyntropyAdapterTest is Test {
     assertEq(address(subject.easyntropy()), address(easyntropy));
   }
 
+  function test_setOwner_changesOwner() public {
+    __prank(owner);
+
+    address newOwner = makeAddr("newOwner");
+    subject.setOwner(newOwner);
+    assertEq(subject.owner(), newOwner);
+  }
+
+  function test_setOwner_emitsOwnerChangedEvent() public {
+    __prank(owner);
+    address newOwner = makeAddr("newOwner");
+
+    vm.expectEmit(true, true, true, true);
+    emit PythNetworkToEasyntropyAdapter.OwnerSet(newOwner);
+    subject.setOwner(newOwner);
+  }
+
+  function test_setOwner_failsWhenExecutedByNotOwner() public {
+    address newOwner = makeAddr("newOwner");
+
+    vm.expectRevert(Easyntropy.PermissionDenied.selector);
+    subject.setOwner(newOwner);
+  }
+
   function test_setEasyentropy_setsEasyntropy() public {
     __prank(owner);
     address newEasyntropy = makeAddr("newEasyntropy");

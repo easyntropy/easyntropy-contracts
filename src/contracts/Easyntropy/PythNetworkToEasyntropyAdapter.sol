@@ -13,6 +13,7 @@ contract PythNetworkToEasyntropyAdapter is IEntropyV2, IEntropy, EasyntropyConsu
   mapping(uint64 requestId => address requester) public requesters;
 
   event EasyentropySet(address indexed easyntropy);
+  event OwnerSet(address indexed owner);
   error NotEnoughEth();
   error NotImplemented();
 
@@ -23,6 +24,13 @@ contract PythNetworkToEasyntropyAdapter is IEntropyV2, IEntropy, EasyntropyConsu
 
   constructor(address _easyntropy) EasyntropyConsumer(_easyntropy) {
     owner = msg.sender;
+  }
+
+  //
+  // contract management
+  function setOwner(address _owner) public onlyOwner {
+    owner = _owner;
+    emit OwnerSet(_owner);
   }
 
   function setEasyentropy(address _easyntropy) public onlyOwner {
