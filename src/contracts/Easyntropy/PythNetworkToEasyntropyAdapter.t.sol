@@ -12,11 +12,11 @@ import { IEntropy } from "pyth/IEntropy.sol";
 import { EntropyStructs } from "pyth/EntropyStructs.sol";
 import { Easyntropy } from "./Easyntropy.sol";
 
-import { PythNetworkV2ToEasyntropyAdapter } from "./PythNetworkV2ToEasyntropyAdapter.sol";
+import { PythNetworkToEasyntropyAdapter } from "./PythNetworkToEasyntropyAdapter.sol";
 
-contract PythNetworkV2ToEasyntropyAdapterTest is Test {
+contract PythNetworkToEasyntropyAdapterTest is Test {
   Easyntropy private easyntropy;
-  PythNetworkV2ToEasyntropyAdapter private subject;
+  PythNetworkToEasyntropyAdapter private subject;
   PythEntropyV2Consumer private pythEntropyV2Consumer;
   PythEntropyConsumer private pythEntropyConsumer;
   address public owner;
@@ -34,7 +34,7 @@ contract PythNetworkV2ToEasyntropyAdapterTest is Test {
 
     __prank(owner);
     easyntropy = new Easyntropy(executor, 1 wei);
-    subject = new PythNetworkV2ToEasyntropyAdapter(address(easyntropy));
+    subject = new PythNetworkToEasyntropyAdapter(address(easyntropy));
     pythEntropyV2Consumer = new PythEntropyV2Consumer(address(subject));
     pythEntropyConsumer = new PythEntropyConsumer(address(subject), address(subject));
     vm.deal(address(pythEntropyV2Consumer), 1 ether);
@@ -62,7 +62,7 @@ contract PythNetworkV2ToEasyntropyAdapterTest is Test {
     address newEasyntropy = makeAddr("newEasyntropy");
 
     vm.expectEmit(true, true, true, true);
-    emit PythNetworkV2ToEasyntropyAdapter.EasyentropySet(newEasyntropy);
+    emit PythNetworkToEasyntropyAdapter.EasyentropySet(newEasyntropy);
     subject.setEasyentropy(newEasyntropy);
   }
 
@@ -78,7 +78,7 @@ contract PythNetworkV2ToEasyntropyAdapterTest is Test {
   }
 
   function test_requestV2_failsWithNotEnoughEth() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotEnoughEth.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotEnoughEth.selector);
     subject.requestV2{ value: 0 }();
   }
 
@@ -146,7 +146,7 @@ contract PythNetworkV2ToEasyntropyAdapterTest is Test {
   }
 
   function test_requestWithCallback_failsWithNotEnoughEth() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotEnoughEth.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotEnoughEth.selector);
     subject.requestWithCallback{ value: 0 }(makeAddr("provider"), keccak256("random"));
   }
 
@@ -212,77 +212,77 @@ contract PythNetworkV2ToEasyntropyAdapterTest is Test {
   }
 
   function test_register_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.register(1 wei, bytes32(0), "", 1, "");
   }
 
   function test_withdraw_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.withdraw(1 wei);
   }
 
   function test_withdrawAsFeeManager_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.withdrawAsFeeManager(makeAddr("provider"), 1 wei);
   }
 
   function test_request_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.request(makeAddr("provider"), bytes32(0), false);
   }
 
   function test_reveal_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.reveal(makeAddr("provider"), 1, bytes32(0), bytes32(0));
   }
 
   function test_revealWithCallback_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.revealWithCallback(makeAddr("provider"), 1, bytes32(0), bytes32(0));
   }
 
   function test_setProviderFee_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.setProviderFee(1 wei);
   }
 
   function test_setProviderFeeAsFeeManager_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.setProviderFeeAsFeeManager(makeAddr("provider"), 1 wei);
   }
 
   function test_setProviderUri_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.setProviderUri("");
   }
 
   function test_setFeeManager_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.setFeeManager(makeAddr("feeManager"));
   }
 
   function test_setMaxNumHashes_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.setMaxNumHashes(1);
   }
 
   function test_setDefaultGasLimit_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.setDefaultGasLimit(1);
   }
 
   function test_advanceProviderCommitment_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.advanceProviderCommitment(makeAddr("provider"), 1, bytes32(0));
   }
 
   function test_constructUserCommitment_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.constructUserCommitment(bytes32(0));
   }
 
   function test_combineRandomValues_revertsNotImplemented() public {
-    vm.expectRevert(PythNetworkV2ToEasyntropyAdapter.NotImplemented.selector);
+    vm.expectRevert(PythNetworkToEasyntropyAdapter.NotImplemented.selector);
     subject.combineRandomValues(bytes32(0), bytes32(0), bytes32(0));
   }
 

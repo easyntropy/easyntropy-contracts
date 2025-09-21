@@ -8,7 +8,7 @@ import "pyth/IEntropy.sol";
 import "./IEasyntropy.sol";
 import "./EasyntropyConsumer.sol";
 
-contract PythNetworkV2ToEasyntropyAdapter is IEntropyV2, IEntropy, EasyntropyConsumer {
+contract PythNetworkToEasyntropyAdapter is IEntropyV2, IEntropy, EasyntropyConsumer {
   address public owner;
   mapping(uint64 requestId => address requester) public requesters;
 
