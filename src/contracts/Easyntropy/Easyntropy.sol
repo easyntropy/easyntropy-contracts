@@ -12,7 +12,8 @@ contract Easyntropy is IEasyntropy {
   mapping(address executor => bool allowed) public executors;
   uint64 public lastRequestId = 0;
 
-  uint256 public fee;
+  uint256 public baseFee;
+  mapping(address requester => uint256 customFee) public customFees;
   mapping(address requester => uint256 balance) public balances;
   mapping(address requester => uint256 reservedFund) public reservedFunds;
   mapping(address requester => uint256 lastResponseBlockNumber) public lastResponses;
@@ -24,7 +25,9 @@ contract Easyntropy is IEasyntropy {
   event OwnerSet(address indexed account);
   event ExecutorAdded(address indexed account);
   event ExecutorRemoved(address indexed account);
-  event FeeSet(uint256 indexed value);
+  event BaseFeeSet(uint256 indexed value);
+  event CustomFeeSet(address indexed account, uint256 indexed value);
+  event CustomFeeRemoved(address indexed account);
   error PermissionDenied();
   error NotEnoughEth();
 
@@ -38,10 +41,14 @@ contract Easyntropy is IEasyntropy {
     _;
   }
 
-  constructor(address executor, uint256 _fee) {
+  constructor(address executor, uint256 _baseFee) {
     executors[executor] = true;
-    fee = _fee;
+    baseFee = _baseFee;
     owner = msg.sender;
+  }
+
+  function fee() public view returns (uint256 result) {
+    result = customFees[msg.sender] > 0 ? customFees[msg.sender] : baseFee;
   }
 
   //
@@ -54,11 +61,12 @@ contract Easyntropy is IEasyntropy {
 
   function requestWithCallback(bytes4 callbackSelector) public payable returns (uint64 requestId) {
     balances[msg.sender] += msg.value;
-    if (balances[msg.sender] < fee) revert NotEnoughEth();
+    uint256 requestFee = fee();
+    if (balances[msg.sender] < requestFee) revert NotEnoughEth();
 
     requestId = ++lastRequestId;
-    reservedFunds[msg.sender] += fee;
-    requestFees[requestId] = fee;
+    reservedFunds[msg.sender] += requestFee;
+    requestFees[requestId] = requestFee;
 
     //
     // To allow withdrawal of reserved funds (after the RELEASE_FUNDS_AFTER_BLOCKS period)
@@ -110,9 +118,19 @@ contract Easyntropy is IEasyntropy {
     emit ExecutorRemoved(executor);
   }
 
-  function setFee(uint256 _fee) public onlyOwner {
-    fee = _fee;
-    emit FeeSet(_fee);
+  function setBaseFee(uint256 _baseFee) public onlyOwner {
+    baseFee = _baseFee;
+    emit BaseFeeSet(_baseFee);
+  }
+
+  function setCustomFee(address addr, uint256 _customFee) public onlyOwner {
+    customFees[addr] = _customFee;
+    emit CustomFeeSet(addr, _customFee);
+  }
+
+  function removeCustomFee(address addr) public onlyOwner {
+    delete customFees[addr];
+    emit CustomFeeRemoved(addr);
   }
 
   //

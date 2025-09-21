@@ -30,7 +30,7 @@ contract PassPlayerMetadataTest is Test {
   }
 
   function test_easyntropyFee_returnsExpectedFeeFuzzy(uint256 fee) public {
-    easyntropy.setFee(fee);
+    easyntropy.setBaseFee(fee);
     assertEq(subject.easyntropyFee(), easyntropy.fee());
   }
 

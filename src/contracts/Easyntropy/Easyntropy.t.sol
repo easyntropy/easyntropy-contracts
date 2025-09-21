@@ -28,33 +28,33 @@ contract EasyntropyTest is Test {
     __prank(user);
   }
 
-  function test_constructor_setsInitialFee() public view {
-    assertEq(subject.fee(), 1 wei);
+  function test_constructor_setsInitialBaseFee() public view {
+    assertEq(subject.baseFee(), 1 wei);
   }
 
   function test_constructor_setsOwner() public view {
     assertEq(subject.owner(), owner);
   }
 
-  function test_setFee_setsFee() public {
+  function test_setBaseFee_setsBaseFee() public {
     __prank(owner);
 
-    subject.setFee(10 wei);
-    assertEq(subject.fee(), 10 wei);
+    subject.setBaseFee(10 wei);
+    assertEq(subject.baseFee(), 10 wei);
   }
 
-  function test_setFee_emitsFeeSetEvent() public {
+  function test_setBaseFee_emitsBaseFeeSetEvent() public {
     __prank(owner);
     uint256 fee = 5 wei;
 
     vm.expectEmit(true, true, true, true);
-    emit Easyntropy.FeeSet(fee);
-    subject.setFee(fee);
+    emit Easyntropy.BaseFeeSet(fee);
+    subject.setBaseFee(fee);
   }
 
-  function test_setFee_failsWhenExecutedByNotOwner() public {
+  function test_setBaseFee_failsWhenExecutedByNotOwner() public {
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
-    subject.setFee(10 wei);
+    subject.setBaseFee(10 wei);
   }
 
   function test_setOwner_changesOwner() public {
@@ -499,6 +499,71 @@ contract EasyntropyTest is Test {
 
     vm.roll(10 * subject.RELEASE_FUNDS_AFTER_BLOCKS());
     assertEq(subject.reservedFundsWaitingPeriod(user), 0);
+  }
+
+  function test_setCustomFee_setsCustomFee() public {
+    __prank(owner);
+
+    subject.setCustomFee(user, 10 wei);
+    assertEq(subject.customFees(user), 10 wei);
+  }
+
+  function test_setCustomFee_emitsEvent() public {
+    __prank(owner);
+
+    vm.expectEmit(true, true, true, true);
+    emit Easyntropy.CustomFeeSet(user, 10 wei);
+    subject.setCustomFee(user, 10 wei);
+  }
+
+  function test_setCustomFee_failsWhenExecutedByNotOwner() public {
+    vm.expectRevert(Easyntropy.PermissionDenied.selector);
+    subject.setCustomFee(user, 10 wei);
+  }
+
+  function test_removeCustomFee_removesCustomFee() public {
+    __prank(owner);
+
+    subject.setCustomFee(user, 10 wei);
+    assertEq(subject.customFees(user), 10 wei);
+
+    subject.removeCustomFee(user);
+    assertEq(subject.customFees(user), 0);
+  }
+
+  function test_removeCustomFee_emitsEvent() public {
+    __prank(owner);
+
+    vm.expectEmit(true, true, true, true);
+    emit Easyntropy.CustomFeeRemoved(user);
+    subject.removeCustomFee(user);
+  }
+
+  function test_removeCustomFee_failsWhenExecutedByNotOwner() public {
+    vm.expectRevert(Easyntropy.PermissionDenied.selector);
+    subject.removeCustomFee(user);
+  }
+
+  function test_fee_returnsCustomFeeWhenSet() public {
+    __prank(owner);
+    subject.setCustomFee(user, 10 wei);
+
+    __prank(user);
+    assertEq(subject.fee(), 10 wei);
+  }
+
+  function test_fee_returnsBaseFeeWhenNoCustomFeeWasSet() public view {
+    assertEq(subject.customFees(user), 0);
+    assertEq(subject.baseFee(), subject.fee());
+  }
+
+  function test_fee_returnsBaseFeeAfterRemovingCustomFee() public {
+    __prank(owner);
+    subject.setCustomFee(user, 10 wei);
+    subject.removeCustomFee(user);
+
+    __prank(user);
+    assertEq(subject.fee(), 1 wei);
   }
 
   // private
