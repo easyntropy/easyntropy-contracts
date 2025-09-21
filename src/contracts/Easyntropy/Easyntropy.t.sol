@@ -28,33 +28,33 @@ contract EasyntropyTest is Test {
     __prank(user);
   }
 
-  function test_constructor_setsInitialFee() public view {
-    assertEq(subject.fee(), 1 wei);
+  function test_constructor_setsInitialBaseFee() public view {
+    assertEq(subject.baseFee(), 1 wei);
   }
 
   function test_constructor_setsOwner() public view {
     assertEq(subject.owner(), owner);
   }
 
-  function test_setFee_setsFee() public {
+  function test_setBaseFee_setsBaseFee() public {
     __prank(owner);
 
-    subject.setFee(10 wei);
-    assertEq(subject.fee(), 10 wei);
+    subject.setBaseFee(10 wei);
+    assertEq(subject.baseFee(), 10 wei);
   }
 
-  function test_setFee_emitsFeeSetEvent() public {
+  function test_setBaseFee_emitsBaseFeeSetEvent() public {
     __prank(owner);
     uint256 fee = 5 wei;
 
     vm.expectEmit(true, true, true, true);
-    emit Easyntropy.FeeSet(fee);
-    subject.setFee(fee);
+    emit Easyntropy.BaseFeeSet(fee);
+    subject.setBaseFee(fee);
   }
 
-  function test_setFee_failsWhenExecutedByNotOwner() public {
+  function test_setBaseFee_failsWhenExecutedByNotOwner() public {
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
-    subject.setFee(10 wei);
+    subject.setBaseFee(10 wei);
   }
 
   function test_setOwner_changesOwner() public {
