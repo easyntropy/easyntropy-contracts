@@ -74,26 +74,26 @@ contract PythNetworkToEasyntropyAdapterTest is Test {
     subject.setOwner(newOwner);
   }
 
-  function test_setEasyentropy_setsEasyntropy() public {
+  function test_setEasyntropy_setsEasyntropy() public {
     __prank(owner);
     address newEasyntropy = makeAddr("newEasyntropy");
-    subject.setEasyentropy(newEasyntropy);
+    subject.setEasyntropy(newEasyntropy);
     assertEq(address(subject.easyntropy()), newEasyntropy);
   }
 
-  function test_setEasyentropy_emitsEasyentropySetEvent() public {
+  function test_setEasyntropy_emitsEasyntropySetEvent() public {
     __prank(owner);
     address newEasyntropy = makeAddr("newEasyntropy");
 
     vm.expectEmit(true, true, true, true);
-    emit PythNetworkToEasyntropyAdapter.EasyentropySet(newEasyntropy);
-    subject.setEasyentropy(newEasyntropy);
+    emit PythNetworkToEasyntropyAdapter.EasyntropySet(newEasyntropy);
+    subject.setEasyntropy(newEasyntropy);
   }
 
-  function test_setEasyentropy_failsWhenExecutedByNotOwner() public {
+  function test_setEasyntropy_failsWhenExecutedByNotOwner() public {
     address newEasyntropy = makeAddr("newEasyntropy");
     vm.expectRevert(Easyntropy.PermissionDenied.selector);
-    subject.setEasyentropy(newEasyntropy);
+    subject.setEasyntropy(newEasyntropy);
   }
 
   function test_requestV2_succeedsWithEnoughEth() public {
