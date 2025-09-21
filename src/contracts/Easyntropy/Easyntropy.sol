@@ -13,6 +13,7 @@ contract Easyntropy is IEasyntropy {
   uint64 public lastRequestId = 0;
 
   uint256 public baseFee;
+  mapping(address requester => uint256 customFee) public customFees;
   mapping(address requester => uint256 balance) public balances;
   mapping(address requester => uint256 reservedFund) public reservedFunds;
   mapping(address requester => uint256 lastResponseBlockNumber) public lastResponses;
@@ -25,6 +26,8 @@ contract Easyntropy is IEasyntropy {
   event ExecutorAdded(address indexed account);
   event ExecutorRemoved(address indexed account);
   event BaseFeeSet(uint256 indexed value);
+  event CustomFeeSet(address indexed account, uint256 indexed value);
+  event CustomFeeRemoved(address indexed account);
   error PermissionDenied();
   error NotEnoughEth();
 
@@ -45,7 +48,7 @@ contract Easyntropy is IEasyntropy {
   }
 
   function fee() public view returns (uint256 result) {
-    result = baseFee;
+    result = customFees[msg.sender] > 0 ? customFees[msg.sender] : baseFee;
   }
 
   //
@@ -118,6 +121,16 @@ contract Easyntropy is IEasyntropy {
   function setBaseFee(uint256 _baseFee) public onlyOwner {
     baseFee = _baseFee;
     emit BaseFeeSet(_baseFee);
+  }
+
+  function setCustomFee(address addr, uint256 _customFee) public onlyOwner {
+    customFees[addr] = _customFee;
+    emit CustomFeeSet(addr, _customFee);
+  }
+
+  function removeCustomFee(address addr) public onlyOwner {
+    delete customFees[addr];
+    emit CustomFeeRemoved(addr);
   }
 
   //
