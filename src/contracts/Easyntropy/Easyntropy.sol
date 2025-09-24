@@ -101,7 +101,7 @@ contract Easyntropy is IEasyntropy {
 
     payable(msg.sender).transfer(requestFee);
 
-    IEasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed, externalSeedId);
+    IEasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed);
   }
 
   //
