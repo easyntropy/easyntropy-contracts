@@ -84,13 +84,7 @@ contract Easyntropy is IEasyntropy {
 
   //
   // rng responses
-  function responseWithCallback(
-    uint64 requestId,
-    address requester,
-    bytes4 callbackSelector,
-    bytes32 externalSeed,
-    uint64 externalSeedId
-  ) public onlyExecutor {
+  function responseWithCallback(uint64 requestId, address requester, bytes4 callbackSelector, bytes32 seed) public onlyExecutor {
     uint256 requestFee = requestFees[requestId];
     if (balances[requester] < requestFee) revert NotEnoughEth();
 
@@ -101,7 +95,7 @@ contract Easyntropy is IEasyntropy {
 
     payable(msg.sender).transfer(requestFee);
 
-    IEasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, externalSeed);
+    IEasyntropyConsumer(requester)._easyntropyFulfill(requestId, callbackSelector, seed);
   }
 
   //
