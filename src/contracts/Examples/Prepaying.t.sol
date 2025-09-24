@@ -52,8 +52,7 @@ contract PrepayingTest is Test {
       requestId,
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      fakeSeed, // externalSeed
-      3 // externalSeedId
+      fakeSeed // externalSeed
     );
     assertEq(subject.latestSeed(), fakeSeed);
   }
