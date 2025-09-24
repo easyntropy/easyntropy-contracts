@@ -1,4 +1,4 @@
-/* solhint-disable func-name-mixedcase, gas-strict-inequalities, one-contract-per-file */
+/* solhint-disable func-name-mixedcase, gas-strict-inequalities, one-contract-per-file, max-line-length */
 /* solhint-enable foundry-test-functions */
 
 // SPDX-License-Identifier: UNLICENSED
@@ -72,8 +72,7 @@ contract EasyntropyConsumerTest is Test {
     subject._easyntropyFulfill(
       1, // requestId
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // easyntropySeed
     );
   }
 
@@ -87,17 +86,15 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // requestId
       address(subject), // requester
-      0xdd7ed06fc684f2c66dfadb7b1ba4b50a120f0d4ba95bdc6989e8e3d2bde39bfd, // seed (based on externalSeed, blockhash, tx.gasprice)
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      0xaeadffac3583eb08463163f542cdaeef23b881c1cd401a475f8994b97f103ba5, // seed (based on requestId, easyntropySeed, blockhash, tx.gasprice)
+      bytes32(uint256(2)) // easyntropySeed
     );
 
     easyntropy.responseWithCallback(
       1, // requestId
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // easyntropySeed
     );
   }
 
@@ -108,17 +105,15 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentFailed(
       1, // requestId
       address(subject), // requester
-      0xdd7ed06fc684f2c66dfadb7b1ba4b50a120f0d4ba95bdc6989e8e3d2bde39bfd, // seed (based on externalSeed, blockhash, tx.gasprice)
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      0xaeadffac3583eb08463163f542cdaeef23b881c1cd401a475f8994b97f103ba5, // seed (based on requestId, easyntropySeed, blockhash, tx.gasprice)
+      bytes32(uint256(2)) // easyntropySeed
     );
 
     easyntropy.responseWithCallback(
       1, // requestId
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill__404(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // easyntropySeed
     );
   }
 
@@ -132,17 +127,15 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // requestId
       address(subject), // requester
-      0xdd7ed06fc684f2c66dfadb7b1ba4b50a120f0d4ba95bdc6989e8e3d2bde39bfd, // seed (based on externalSeed, blockhash, tx.gasprice)
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      0xaeadffac3583eb08463163f542cdaeef23b881c1cd401a475f8994b97f103ba5, // seed (based on requestId, easyntropySeed, blockhash, tx.gasprice)
+      bytes32(uint256(2)) // easyntropySeed
     );
 
     easyntropy.responseWithCallback(
       1, // requestId
       address(subject), // requester
       bytes4(keccak256("customFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // easyntropySeed
     );
   }
 
@@ -157,17 +150,15 @@ contract EasyntropyConsumerTest is Test {
     emit EasyntropyConsumer.FulfillmentSucceeded(
       1, // requestId
       address(subject), // requester
-      0x0000000000000000000000000000000000000000000000000000000000000000, // seed (based on externalSeed and internalSeed)
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      0x0000000000000000000000000000000000000000000000000000000000000000, // seed (based on easyntropySeed and internalSeed)
+      bytes32(uint256(2)) // easyntropySeed
     );
 
     easyntropy.responseWithCallback(
       1, // requestId
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // easyntropySeed
     );
   }
 
@@ -242,7 +233,7 @@ contract EasyntropyConsumerDummyCustomCalculateSeed is EasyntropyConsumer {
   function easyntropyFulfill(uint64, bytes32) public onlyEasyntropy {
     emit FulfillmentSucceeded();
   }
-  function calculateSeed(bytes32) internal pure override returns (bytes32 result) {
+  function calculateSeed(uint64, bytes32) internal pure override returns (bytes32 result) {
     result = 0;
   }
 }

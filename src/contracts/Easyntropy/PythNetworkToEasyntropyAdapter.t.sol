@@ -204,7 +204,7 @@ contract PythNetworkToEasyntropyAdapterTest is Test {
     __prank(executor);
     vm.expectEmit(true, true, true, false);
     emit PythEntropyV2Consumer.CallbackReceived(requestId, address(subject), seed);
-    easyntropy.responseWithCallback(requestId, address(subject), defaultEasyntropyCallbackSymbol, seed, 1);
+    easyntropy.responseWithCallback(requestId, address(subject), defaultEasyntropyCallbackSymbol, seed);
   }
 
   function test_easyntropyFulfill_callsConsumerCallbackFromPythV1Consumer() public {
@@ -214,7 +214,7 @@ contract PythNetworkToEasyntropyAdapterTest is Test {
     __prank(executor);
     vm.expectEmit(true, true, true, false);
     emit PythEntropyConsumer.CallbackReceived(requestId, address(subject), seed);
-    easyntropy.responseWithCallback(requestId, address(subject), defaultEasyntropyCallbackSymbol, seed, 1);
+    easyntropy.responseWithCallback(requestId, address(subject), defaultEasyntropyCallbackSymbol, seed);
   }
 
   function test_easyntropyFulfill_deletesRequester() public {
@@ -223,7 +223,7 @@ contract PythNetworkToEasyntropyAdapterTest is Test {
 
     __prank(executor);
     assertEq(subject.requesters(requestId), address(pythEntropyV2Consumer));
-    easyntropy.responseWithCallback(requestId, address(subject), defaultEasyntropyCallbackSymbol, seed, 1);
+    easyntropy.responseWithCallback(requestId, address(subject), defaultEasyntropyCallbackSymbol, seed);
     assertEq(subject.requesters(requestId), address(0));
   }
 
