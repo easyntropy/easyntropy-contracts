@@ -557,6 +557,14 @@ contract EasyntropyTest is Test {
     assertEq(subject.baseFee(), subject.fee());
   }
 
+  function test_fee_returnsZeroWhenCustomFeeIsSetToMax() public {
+    __prank(owner);
+    subject.setCustomFee(user, type(uint256).max);
+
+    __prank(user);
+    assertEq(subject.fee(), 0);
+  }
+
   function test_fee_returnsBaseFeeAfterRemovingCustomFee() public {
     __prank(owner);
     subject.setCustomFee(user, 10 wei);

@@ -47,8 +47,11 @@ contract Easyntropy is IEasyntropy {
     owner = msg.sender;
   }
 
-  function fee() public view returns (uint256 result) {
-    result = customFees[msg.sender] > 0 ? customFees[msg.sender] : baseFee;
+  // solhint-disable-next-line gas-named-return-values
+  function fee() public view returns (uint256) {
+    if (customFees[msg.sender] == 0) return baseFee;
+    if (customFees[msg.sender] == type(uint256).max) return 0;
+    return customFees[msg.sender];
   }
 
   //
