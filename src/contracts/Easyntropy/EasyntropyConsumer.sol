@@ -8,20 +8,8 @@ import "./IEasyntropyConsumer.sol";
 abstract contract EasyntropyConsumer is IEasyntropyConsumer {
   IEasyntropy public easyntropy;
 
-  event FulfillmentSucceeded(
-    uint64 indexed requestId,
-    address indexed requester,
-    bytes32 seed,
-    bytes32 externalSeed,
-    uint64 indexed externalSeedId
-  );
-  event FulfillmentFailed(
-    uint64 indexed requestId,
-    address indexed requester,
-    bytes32 seed,
-    bytes32 externalSeed,
-    uint64 indexed externalSeedId
-  );
+  event FulfillmentSucceeded(uint64 indexed requestId, address indexed requester, bytes32 seed, bytes32 easyntropySeed);
+  event FulfillmentFailed(uint64 indexed requestId, address indexed requester, bytes32 seed, bytes32 easyntropySeed);
   error PermissionDenied();
 
   modifier onlyEasyntropy() {
@@ -39,14 +27,12 @@ abstract contract EasyntropyConsumer is IEasyntropyConsumer {
   }
 
   //
-  // calculates the final seed.
-  //
-  // The externalSeed is the same for everyone within a single drand.love time window
-  // (approximately 3 seconds), so we need our own semi-random component. By default, this method
-  // is called to compute the final seed. If there are project-specific variables (for example, a
-  // player ID), feel free to override this method to incorporate them.
-  function calculateSeed(bytes32 externalSeed) internal view virtual returns (bytes32 result) {
-    result = keccak256(abi.encodePacked(externalSeed, blockhash(block.number - 1), tx.gasprice));
+  // Calculate the final seed.
+  // If you want to introduce your own semi-random component
+  // (for example, a player ID in some game, etc.), feel free
+  // to override this method.
+  function calculateSeed(uint64 requestId, bytes32 easyntropySeed) internal view virtual returns (bytes32 result) {
+    result = keccak256(abi.encodePacked(requestId, easyntropySeed, blockhash(block.number - 1), tx.gasprice));
   }
 
   //
@@ -79,20 +65,15 @@ abstract contract EasyntropyConsumer is IEasyntropyConsumer {
 
   //
   // response handling
-  function _easyntropyFulfill(
-    uint64 requestId,
-    bytes4 callbackSelector,
-    bytes32 externalSeed,
-    uint64 externalSeedId
-  ) external _onlyEasyntropyOracle {
-    bytes32 seed = calculateSeed(externalSeed);
+  function _easyntropyFulfill(uint64 requestId, bytes4 callbackSelector, bytes32 easyntropySeed) external _onlyEasyntropyOracle {
+    bytes32 seed = calculateSeed(requestId, easyntropySeed);
 
     // solhint-disable-next-line avoid-low-level-calls
     (bool success, ) = address(this).call(abi.encodeWithSelector(callbackSelector, requestId, seed));
     if (success) {
-      emit FulfillmentSucceeded(requestId, address(this), seed, externalSeed, externalSeedId);
+      emit FulfillmentSucceeded(requestId, address(this), seed, easyntropySeed);
     } else {
-      emit FulfillmentFailed(requestId, address(this), seed, externalSeed, externalSeedId);
+      emit FulfillmentFailed(requestId, address(this), seed, easyntropySeed);
     }
   }
 }

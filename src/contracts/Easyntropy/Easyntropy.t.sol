@@ -373,8 +373,7 @@ contract EasyntropyTest is Test {
       1, // requestId
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // seed
     );
   }
 
@@ -401,8 +400,7 @@ contract EasyntropyTest is Test {
       requestId,
       address(easyntropyConsumer), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // seed
     );
   }
 
@@ -424,8 +422,7 @@ contract EasyntropyTest is Test {
       requestId,
       address(easyntropyConsumer), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // seed
     );
     assertEq(subject.lastResponses(address(easyntropyConsumer)), block.number);
   }
@@ -447,8 +444,7 @@ contract EasyntropyTest is Test {
       requestId,
       address(easyntropyConsumer), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // seed
     );
     assertEq(subject.balances(address(easyntropyConsumer)), 0);
     assertEq(subject.reservedFunds(address(easyntropyConsumer)), 0);
@@ -469,8 +465,7 @@ contract EasyntropyTest is Test {
       requestId,
       address(easyntropyConsumer), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // seed
     );
     assertEq(subject.lastResponses(address(easyntropyConsumer)), 1000);
 

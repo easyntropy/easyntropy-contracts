@@ -9,5 +9,5 @@ interface IEasyntropyConsumer {
   function easyntropyFee() external view returns (uint256 fee);
   function easyntropyCurrentBalance() external view returns (uint256 balance);
   function easyntropyDeposit() external payable;
-  function _easyntropyFulfill(uint64 requestId, bytes4 callbackSelector, bytes32 externalSeed, uint64 externalSeedId) external;
+  function _easyntropyFulfill(uint64 requestId, bytes4 callbackSelector, bytes32 seed) external;
 }

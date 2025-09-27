@@ -75,8 +75,7 @@ contract StoreLastSeedDefaultCallbackTest is Test {
       requestId,
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // externalSeed
     );
   }
 
@@ -89,8 +88,7 @@ contract StoreLastSeedDefaultCallbackTest is Test {
       requestId,
       address(subject), // requester
       bytes4(keccak256("easyntropyFulfill(uint64,bytes32)")), // callbackSelector
-      fakeSeed, // externalSeed
-      3 // externalSeedId
+      fakeSeed // externalSeed
     );
     assertEq(subject.latestSeed(), fakeSeed);
   }

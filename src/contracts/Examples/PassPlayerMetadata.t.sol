@@ -74,8 +74,7 @@ contract PassPlayerMetadataTest is Test {
       requestId,
       address(subject), // requester
       bytes4(keccak256("trainGladiator(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(5)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(5)) // externalSeed
     );
 
     uint8 gladiatorStrength = subject.gladiators(gladiatorId);

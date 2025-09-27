@@ -66,8 +66,7 @@ contract StoreLastSeedCustomCallbackTest is Test {
       requestId,
       address(subject), // requester
       bytes4(keccak256("customFulfill(uint64,bytes32)")), // callbackSelector
-      bytes32(uint256(2)), // externalSeed
-      3 // externalSeedId
+      bytes32(uint256(2)) // externalSeed
     );
   }
 
@@ -80,8 +79,7 @@ contract StoreLastSeedCustomCallbackTest is Test {
       requestId,
       address(subject), // requester
       bytes4(keccak256("customFulfill(uint64,bytes32)")), // callbackSelector
-      fakeSeed, // externalSeed
-      3 // externalSeedId
+      fakeSeed // externalSeed
     );
     assertEq(subject.latestSeed(), fakeSeed);
   }
