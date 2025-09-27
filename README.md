@@ -1,6 +1,6 @@
 # Easyntropy
 
-Mainnet address: [`0x8EAfe1cBaE6426aa84AFf6D97ea48029d92a5767`](https://etherscan.io/address/0x8EAfe1cBaE6426aa84AFf6D97ea48029d92a5767)
+Mainnet address: [`0x2a9adbbad92f37670e8E98fe86a8B2fb07681690`](https://etherscan.io/address/0x2a9adbbad92f37670e8E98fe86a8B2fb07681690)
 
 Testnet address: [`0x62AdC8dd46E71E6dc04A8EC5304e9E9521A9D436`](https://sepolia.etherscan.io/address/0x62AdC8dd46E71E6dc04A8EC5304e9E9521A9D436)
 
