@@ -11,7 +11,7 @@ forge create \
   --constructor-args $EXECUTOR_ADDRESS $FEE_AMOUNT
 
 forge create \
-  ./src/contracts/Examples/StoreLastSeedDefaultCallback.sol:StoreLastSeedDefaultCallback \
+  ./src/contracts/Examples/MultiRequest.sol:MultiRequest \
   --broadcast \
   --unlocked \
   --from $EXECUTOR_ADDRESS \
