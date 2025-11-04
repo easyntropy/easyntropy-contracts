@@ -4,6 +4,10 @@ Mainnet address: [`0x2a9adbbad92f37670e8E98fe86a8B2fb07681690`](https://ethersca
 
 Testnet address: [`0x62AdC8dd46E71E6dc04A8EC5304e9E9521A9D436`](https://sepolia.etherscan.io/address/0x62AdC8dd46E71E6dc04A8EC5304e9E9521A9D436)
 
+### Examples
+
+Visit the [Examples folder](./src/contracts/Examples/) folder to see examples of usage.
+
 ### Development
 
 Installation:
